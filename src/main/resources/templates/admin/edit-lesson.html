@@ -53,6 +53,93 @@
     const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
 
     $(document).ready(function () {
+        $.extend($.summernote.plugins, {
+            'imageResize': function (context) {
+                var ui = $.summernote.ui;
+                var $image;
+
+                context.invoke('editor.createNodeObserver', {
+                    callback: function (mutations) {
+                        mutations.forEach(function (mutation) {
+                            $(mutation.addedNodes).each(function () {
+                                if ($(this).is('img')) {
+                                    bindResize($(this));
+                                }
+                            });
+                        });
+                    },
+                    subtree: true,
+                    childList: true
+                });
+
+                function bindResize($img) {
+                    $img.off('click').on('click', function (e) {
+                        e.preventDefault();
+                        $image = $(this);
+                        showResizeMenu($image);
+                    });
+                }
+
+                function showResizeMenu($img) {
+                    var widths = {
+                        '25%': '25%', '33%': '33%', '50%': '50%',
+                        '75%': '75%', '100%': '100%'
+                    };
+                    var currentWidth = $img.css('width') || $img.attr('width') || 'auto';
+
+                    var html = '<div class="p-2" style="min-width:180px">';
+                    html += '<p class="fw-bold mb-2">Velicina slike</p>';
+                    html += '<div class="d-flex flex-wrap gap-1 mb-2">';
+                    Object.keys(widths).forEach(function (label) {
+                        var active = (currentWidth === widths[label]) ? 'btn-primary' : 'btn-outline-primary';
+                        html += '<button class="btn btn-sm ' + active + ' img-size-btn" data-width="' + widths[label] + '">' + label + '</button>';
+                    });
+                    html += '</div>';
+                    html += '<div class="input-group input-group-sm mb-2">';
+                    html += '<span class="input-group-text">px</span>';
+                    html += '<input type="number" class="form-control" id="customImgWidth" value="' + ($img.width() || '') + '" placeholder="sirina">';
+                    html += '</div>';
+                    html += '<button class="btn btn-sm btn-success w-100" id="applyImgSize">Primeni</button>';
+                    html += '<button class="btn btn-sm btn-danger w-100 mt-1" id="removeImg">Obrisi sliku</button>';
+                    html += '</div>';
+
+                    var $popover = $('<div class="img-resize-popover" style="position:absolute;z-index:9999;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);"></div>');
+                    $popover.html(html);
+
+                    var offset = $img.offset();
+                    $popover.css({ top: offset.top + $img.outerHeight() + 5, left: offset.left });
+                    $('body').append($popover);
+
+                    $popover.find('.img-size-btn').on('click', function () {
+                        $img.css('width', $(this).data('width'));
+                        $img.css('height', 'auto');
+                        $popover.remove();
+                    });
+
+                    $popover.find('#applyImgSize').on('click', function () {
+                        var w = $popover.find('#customImgWidth').val();
+                        if (w) {
+                            $img.css('width', w + 'px');
+                            $img.css('height', 'auto');
+                        }
+                        $popover.remove();
+                    });
+
+                    $popover.find('#removeImg').on('click', function () {
+                        $img.remove();
+                        $popover.remove();
+                    });
+
+                    $(document).on('click.imgResize', function (e) {
+                        if (!$popover.is(e.target) && !$popover.has(e.target).length && !$img.is(e.target)) {
+                            $popover.remove();
+                            $(document).off('click.imgResize');
+                        }
+                    });
+                }
+            }
+        });
+
         $('#contentArea').summernote({
             lang: 'sr-Latn',
             height: 500,
@@ -66,6 +153,7 @@
                 ['insert', ['link', 'picture', 'video']],
                 ['view', ['fullscreen', 'codeview', 'help']]
             ],
+            plugins: ['imageResize'],
             callbacks: {
                 onImageUpload: function (files) {
                     uploadImage(files[0], this);
@@ -75,6 +163,13 @@
                     if (bufferText && bufferText.includes('<img')) {
                         e.preventDefault();
                     }
+                },
+                onInit: function () {
+                    setTimeout(function () {
+                        $('.note-editable').find('img').each(function () {
+                            $(this).css('cursor', 'pointer');
+                        });
+                    }, 500);
                 }
             }
         });
@@ -94,6 +189,7 @@
             success: function (data) {
                 $(editor).summernote('insertImage', data.url, function ($image) {
                     $image.css('max-width', '100%');
+                    $image.css('cursor', 'pointer');
                     $image.attr('alt', 'slika');
                 });
             },

@@ -10,6 +10,12 @@
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+    <div class="mb-4">
+        <a href="/admin/quiz" class="btn btn-warning">
+            <i class="bi bi-pencil-square"></i> Upravljanje pitanjima kviza
+        </a>
+    </div>
+
     <!-- ADD NEW SECTION -->
     <div class="card mb-4 border-primary">
         <div class="card-header bg-primary text-white fw-bold">+ Nova sekcija</div>

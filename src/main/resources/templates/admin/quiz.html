@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Kviz')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Admin panel – Završni kviz</h2>
+        <a href="/admin" class="btn btn-outline-secondary btn-sm">Nazad na admin</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- ADD NEW QUESTION -->
+    <div class="card mb-4 border-primary">
+        <div class="card-header bg-primary text-white fw-bold">+ Novo pitanje</div>
+        <div class="card-body">
+            <form th:action="@{/admin/quiz/add}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Tekst pitanja</label>
+                    <textarea name="questionText" class="form-control" rows="2" required placeholder="Unesite pitanje..."></textarea>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija A</label>
+                        <input type="text" name="optionA" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija B</label>
+                        <input type="text" name="optionB" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija C</label>
+                        <input type="text" name="optionC" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija D (opciono)</label>
+                        <input type="text" name="optionD" class="form-control">
+                    </div>
+                </div>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Tačan odgovor</label>
+                        <select name="correctAnswer" class="form-select" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Redosled</label>
+                        <input type="number" name="sortOrder" class="form-control" value="99">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100">Dodaj pitanje</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EXISTING QUESTIONS -->
+    <div th:each="q, stat : ${questions}" class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-start">
+            <div>
+                <span class="badge bg-secondary me-2" th:text="${stat.index + 1}">1</span>
+                <strong th:text="${q.questionText}">Pitanje</strong>
+                <span class="badge bg-success ms-2" th:text="'Tačan: ' + ${q.correctAnswer}">Tačan: B</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary" th:attr="data-bs-toggle='collapse', data-bs-target='#edit-${q.id}'" type="button">Izmeni</button>
+                <form th:action="@{/admin/quiz/{id}/delete(id=${q.id})}" method="post" class="d-inline"
+                      onsubmit="return confirm('Obrisati pitanje?')">
+                    <button class="btn btn-sm btn-outline-danger">Obriši</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- COLLAPSIBLE EDIT FORM -->
+        <div class="collapse" th:id="'edit-' + ${q.id}">
+            <div class="card-body border-top">
+                <form th:action="@{/admin/quiz/{id}/edit(id=${q.id})}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Tekst pitanja</label>
+                        <textarea name="questionText" class="form-control" rows="2" required th:text="${q.questionText}"></textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Opcija A</label>
+                            <input type="text" name="optionA" class="form-control" required th:value="${q.optionA}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Opcija B</label>
+                            <input type="text" name="optionB" class="form-control" required th:value="${q.optionB}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Opcija C</label>
+                            <input type="text" name="optionC" class="form-control" required th:value="${q.optionC}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Opcija D (opciono)</label>
+                            <input type="text" name="optionD" class="form-control" th:value="${q.optionD}">
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Tačan odgovor</label>
+                            <select name="correctAnswer" class="form-select" required>
+                                <option value="A" th:selected="${q.correctAnswer == 'A'}">A</option>
+                                <option value="B" th:selected="${q.correctAnswer == 'B'}">B</option>
+                                <option value="C" th:selected="${q.correctAnswer == 'C'}">C</option>
+                                <option value="D" th:selected="${q.correctAnswer == 'D'}">D</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Redosled</label>
+                            <input type="number" name="sortOrder" class="form-control" th:value="${q.sortOrder}">
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100">Sačuvaj izmene</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- OPTIONS PREVIEW -->
+        <div class="card-body pt-0">
+            <div class="small text-muted">
+                <span th:classappend="${q.correctAnswer == 'A'} ? 'text-success fw-bold'" th:text="'A: ' + ${q.optionA}"></span><br>
+                <span th:classappend="${q.correctAnswer == 'B'} ? 'text-success fw-bold'" th:text="'B: ' + ${q.optionB}"></span><br>
+                <span th:classappend="${q.correctAnswer == 'C'} ? 'text-success fw-bold'" th:text="'C: ' + ${q.optionC}"></span><br>
+                <span th:if="${q.optionD != null and !q.optionD.isEmpty()}"
+                      th:classappend="${q.correctAnswer == 'D'} ? 'text-success fw-bold'"
+                      th:text="'D: ' + ${q.optionD}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(questions)}" class="alert alert-info">Nema pitanja u kvizu.</div>
+</div>
+</body>
+</html>

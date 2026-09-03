@@ -1,6 +1,7 @@
 package com.expo.security.controller;
 
 import com.expo.security.model.Lesson;
+import com.expo.security.model.QuizQuestion;
 import com.expo.security.model.Section;
 import com.expo.security.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -149,5 +150,64 @@ public class AdminController {
             }
         }
         return images;
+    }
+
+    // ========== QUIZ QUESTIONS ==========
+
+    @GetMapping("/quiz")
+    public String quizQuestions(Model model) {
+        List<QuizQuestion> questions = courseService.getAllQuestions();
+        model.addAttribute("questions", questions);
+        return "admin/quiz";
+    }
+
+    @PostMapping("/quiz/add")
+    public String addQuestion(@RequestParam String questionText,
+                              @RequestParam String optionA,
+                              @RequestParam String optionB,
+                              @RequestParam String optionC,
+                              @RequestParam(required = false) String optionD,
+                              @RequestParam String correctAnswer,
+                              @RequestParam int sortOrder,
+                              RedirectAttributes ra) {
+        try {
+            courseService.addQuestion(questionText, optionA, optionB, optionC,
+                    optionD != null ? optionD : "", correctAnswer, sortOrder);
+            ra.addFlashAttribute("success", "Pitanje dodato");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/quiz";
+    }
+
+    @PostMapping("/quiz/{id}/edit")
+    public String editQuestion(@PathVariable Long id,
+                               @RequestParam String questionText,
+                               @RequestParam String optionA,
+                               @RequestParam String optionB,
+                               @RequestParam String optionC,
+                               @RequestParam(required = false) String optionD,
+                               @RequestParam String correctAnswer,
+                               @RequestParam int sortOrder,
+                               RedirectAttributes ra) {
+        try {
+            courseService.updateQuestion(id, questionText, optionA, optionB, optionC,
+                    optionD != null ? optionD : "", correctAnswer, sortOrder);
+            ra.addFlashAttribute("success", "Pitanje ažurirano");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/quiz";
+    }
+
+    @PostMapping("/quiz/{id}/delete")
+    public String deleteQuestion(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            courseService.deleteQuestion(id);
+            ra.addFlashAttribute("success", "Pitanje obrisano");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/quiz";
     }
 }

@@ -31,7 +31,7 @@ public class CourseService {
     private final Path uploadPath = Paths.get("./uploads").toAbsolutePath().normalize();
 
     public List<Section> getAllSections() {
-        return sectionRepository.findAllByOrderBySortOrderAsc();
+        return sectionRepository.findAllWithLessons();
     }
 
     public Lesson getLesson(Long id) {
@@ -40,7 +40,7 @@ public class CourseService {
     }
 
     public List<Lesson> getAllLessonsOrdered() {
-        return lessonRepository.findAllByOrderBySortOrderAsc();
+        return lessonRepository.findAllBySectionSortOrderThenLessonSortOrder();
     }
 
     public long getCompletedLessonsCount(Long userId) {
@@ -152,6 +152,46 @@ public class CourseService {
     }
 
     // ========== ADMIN ==========
+
+    @Transactional
+    public QuizQuestion addQuestion(String questionText, String optionA, String optionB,
+                                    String optionC, String optionD, String correctAnswer, int sortOrder) {
+        QuizQuestion q = QuizQuestion.builder()
+                .questionText(questionText)
+                .optionA(optionA)
+                .optionB(optionB)
+                .optionC(optionC)
+                .optionD(optionD)
+                .correctAnswer(correctAnswer.toUpperCase())
+                .sortOrder(sortOrder)
+                .build();
+        return questionRepository.save(q);
+    }
+
+    @Transactional
+    public QuizQuestion updateQuestion(Long id, String questionText, String optionA, String optionB,
+                                       String optionC, String optionD, String correctAnswer, int sortOrder) {
+        QuizQuestion q = questionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pitanje nije pronađeno"));
+        q.setQuestionText(questionText);
+        q.setOptionA(optionA);
+        q.setOptionB(optionB);
+        q.setOptionC(optionC);
+        q.setOptionD(optionD);
+        q.setCorrectAnswer(correctAnswer.toUpperCase());
+        q.setSortOrder(sortOrder);
+        return questionRepository.save(q);
+    }
+
+    @Transactional
+    public void deleteQuestion(Long id) {
+        questionRepository.deleteById(id);
+    }
+
+    public QuizQuestion getQuestion(Long id) {
+        return questionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pitanje nije pronađeno"));
+    }
 
     @Transactional
     public Lesson updateLesson(Long id, String title, String content, MultipartFile image) throws IOException {

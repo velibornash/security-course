@@ -70,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // ===== 2. PRAVNI OKVIR I AKREDITACIJA =====
         Section s2 = sectionRepository.save(Section.builder()
-                .title("Pravni okvir i akreditacija")
+                .title("Pravni okvir i akreditovanje")
                 .description("Odgovornost, pravilna upotreba akreditacije i zone kretanja")
                 .sortOrder(2)
                 .build());
@@ -181,7 +181,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // ===== 3. BEZBEDNOSNA KULTURA =====
         Section s3 = sectionRepository.save(Section.builder()
-                .title("Bezbednosna kultura")
+                .title("Bezbednosna kultura i unutrašnje pretnje")
                 .description("Kultura zajedničke bezbednosti, prepoznavanje pretnji i zaštita informacija")
                 .sortOrder(3)
                 .build());
@@ -312,7 +312,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // ===== 4. SUMNJIVI PREDMETI =====
         Section s4 = sectionRepository.save(Section.builder()
-                .title("Sumnjivi predmeti i izvori rizika")
+                .title("Sumnjivi predmeti i zabranjena sredstva")
                 .description("Zabranjeni predmeti, protokol VIDI-PREPOZNAJ-PRIJAVI i obezbeđenje zone")
                 .sortOrder(4)
                 .build());
@@ -377,6 +377,8 @@ public class DataInitializer implements CommandLineRunner {
                 .content("""
                         <h3>Obezbeđivanje restriktivne zone</h3>
                         <p>Akreditovano lice ne rešava sumnjiv predmet, već prevenstveno <strong>štiti sebe, druge i prostor</strong> do dolaska privatnog obezbeđenja ili MUP-a. Najvažnije je da se ostane miran, da se prilazi bliže nego što je bezbedno i da se ne ulazi u postupke koji lice na pregled i premeštanje predmeta.</p>
+
+                        <img src="/uploads/manInBlacHandRaised.jpg" class="img-fluid rounded mb-3" alt="Bezbednosno lice - zaustavi i prijavi">
 
                         <h4>Kako postupiti</h4>
                         <ul>
@@ -518,6 +520,8 @@ public class DataInitializer implements CommandLineRunner {
                         <h3>Redosled reakcija u kriznim situacijama</h3>
                         <p>Kada se u restriktivnoj zoni pojavi opasnost, najvažnije je da ne reagujete neorganizovano. Pravi redosled je jednostavan; proceni udaljenost, prijavi kroz zvaničan kanal, udalji se iz neposredne blizine i prati uputstva nadležne službe. Cilj je da zaštitiš sebe i druge, bez samostalnog preuzimanja ovlašćenja koja pripadaju obezbeđenju ili policiji.</p>
 
+                        <img src="/uploads/nosenjeAkreditacije.jpg" class="img-fluid rounded mb-3" alt="Integrisana vežba reakcije">
+
                         <h4>Šta je prioritet</h4>
                         <ul>
                             <li><strong>Život i fizička bezbednost</strong> imaju prednost nad imovinom.</li>
@@ -560,6 +564,7 @@ public class DataInitializer implements CommandLineRunner {
                             <p>Nakon što ste prošli sve lekcije, vreme je za završni test. Potrebno je najmanje 9 tačnih odgovora od 10 pitanja (90%) za uspešno polaganje.</p>
                             <p>Ukoliko ne položite test, možete ga ponovo polagati.</p>
                         </div>
+                        <img src="/uploads/kacenjeakreditacije.jpg" class="img-fluid rounded mb-3" alt="Završni test - pregled rezultata">
                         """)
                 .sortOrder(5)
                 .section(s5)
@@ -578,6 +583,8 @@ public class DataInitializer implements CommandLineRunner {
                         <h3>Čestitke na završetku kursa!</h3>
                         <p>Poštovani,</p>
                         <p>Čestitamo vam na uspešnom završetku kursa „Bezbednost u restriktivnim zonama — Expo 2027"! Kao akreditovana lica bez prethodnog bezbednosnog znanja koja pristupaju restriktivnim zonama, svesni smo koliko je važno imati čvrstu osnovu i pripremljen pristup za ovu izazovnu situaciju.</p>
+
+                        <img src="/uploads/zoneKretanjaNaLokaciji.jpg" class="img-fluid rounded mb-3" alt="Pregled ključnih lekcija kursa">
 
                         <h4>Ciljevi kursa:</h4>
                         <ul>

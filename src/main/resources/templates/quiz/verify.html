@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Verifikacija')}"></head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card p-4 text-center">
+        <div th:if="${attempt != null and attempt.passed}">
+            <h2 class="text-success">✓ Sertifikat je validan</h2>
+            <p th:text="'Polaznik: ' + ${attempt.user.fullName}"></p>
+            <p th:text="'Email: ' + ${attempt.user.email}"></p>
+            <p th:text="'Datum: ' + ${#temporals.format(attempt.attemptedAt, 'dd.MM.yyyy. HH:mm')}"></p>
+            <p th:text="'Rezultat: ' + ${attempt.score} + '/' + ${attempt.totalQuestions} + ' (' + ${#numbers.formatDecimal(attempt.percentage,1,0)} + '%)'"></p>
+            <p class="text-muted">Kod: <code th:text="${attempt.certificateCode}"></code></p>
+        </div>
+        <div th:unless="${attempt != null and attempt.passed}">
+            <h2 class="text-danger">✗ Sertifikat nije pronađen ili nije validan</h2>
+        </div>
+    </div>
+</div>
+</body>
+</html>

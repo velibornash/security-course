@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Izmena lekcije')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <h2 class="mb-4">Izmena lekcije</h2>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card p-4">
+        <form th:action="@{/admin/lesson/{id}/edit(id=${lesson.id})}" method="post" enctype="multipart/form-data" id="lessonForm">
+            <div class="mb-3">
+                <label class="form-label">Naslov</label>
+                <input type="text" name="title" class="form-control" th:value="${lesson.title}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Sadrzaj lekcije</label>
+                <textarea name="content" id="contentArea" th:text="${lesson.content}"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Opciona naslovna slika (iznad celog teksta)</label>
+                <div th:if="${lesson.imagePath}" class="mb-2">
+                    <img th:src="${lesson.imagePath}" style="max-height:120px" class="rounded border">
+                    <div class="form-check mt-1">
+                        <input class="form-check-input" type="checkbox" name="removeImage" value="true" id="removeImage">
+                        <label class="form-check-label text-danger" for="removeImage">Obrisi naslovnu sliku</label>
+                    </div>
+                </div>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sacuvaj izmene</button>
+            <a href="/admin" class="btn btn-outline-secondary">Nazad</a>
+            <a th:href="@{/lesson/{id}(id=${lesson.id})}" class="btn btn-outline-info" target="_blank">Pogledaj lekciju</a>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script th:inline="javascript">
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+
+    tinymce.init({
+        selector: '#contentArea',
+        height: 500,
+        menubar: 'file edit view insert format tools table',
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
+        ],
+        toolbar: 'undo redo | blocks | ' +
+            'bold italic underline strikethrough | forecolor backcolor | ' +
+            'alignleft aligncenter alignright alignjustify | ' +
+            'bullist numlist outdent indent | ' +
+            'link image media | table | ' +
+            'removeformat | help',
+        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; } img { max-width: 100%; border-radius: 8px; }',
+        image_title: true,
+        automatic_uploads: true,
+        file_picker_types: 'image',
+        images_upload_url: '/admin/upload-image',
+        images_upload_credentials: true,
+        setup: function (editor) {
+            editor.on('BeforeSetContent', function (e) {
+                e.content = e.content.replace(/<img /g, '<img style="max-width:100%;border-radius:8px;" ');
+            });
+        },
+        init_instance_callback: function (editor) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/admin/upload-image/list', true);
+            xhr.setRequestHeader(csrfHeader, csrfToken);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        var images = JSON.parse(xhr.responseText);
+                        editor.ui.registry.addMenuItem('previousimages', {
+                            text: 'Prethodne slike',
+                            onAction: function () {
+                                var html = '<div style="padding:10px;"><p>Izaberite sliku za umetanje:</p>';
+                                images.forEach(function (img) {
+                                    html += '<div style="display:inline-block;margin:5px;cursor:pointer;" onclick="tinymce.activeEditor.insertContent(\'<img src=&quot;' + img.url + '&quot; style=&quot;max-width:100%;border-radius:8px;&quot; alt=&quot;slika&quot;>\');tinymce.activeEditor.windowManager.close();">' +
+                                        '<img src="' + img.url + '" style="height:80px;border:1px solid #ddd;border-radius:4px;"><br>' +
+                                        '<small>' + img.name + '</small></div>';
+                                });
+                                html += '</div>';
+                                editor.windowManager.open({
+                                    title: 'Umetni sliku',
+                                    body: { type: 'htmlpanel', html: html },
+                                    buttons: []
+                                });
+                            }
+                        });
+                    } catch (e) {}
+                }
+            };
+            xhr.send();
+        }
+    });
+</script>
+</body>
+</html>

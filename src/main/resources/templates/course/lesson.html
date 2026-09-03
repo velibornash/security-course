@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${lesson.title})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-muted" th:text="'Lekcija ' + ${currentIndex} + ' od ' + ${totalLessons}">Lekcija 1 od 6</small>
+        <a href="/dashboard" class="btn btn-sm btn-outline-secondary">← Nazad na pregled</a>
+    </div>
+
+    <div class="card p-4">
+        <h2 th:text="${lesson.title}" class="mb-4">Naslov</h2>
+
+        <div th:if="${lesson.imagePath}" class="mb-4 text-center">
+            <img th:src="${lesson.imagePath}" class="img-fluid rounded" style="max-height:400px" alt="Slika lekcije">
+        </div>
+
+        <div class="lesson-content" th:utext="${lesson.content}">
+            Sadržaj lekcije...
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4 mb-5">
+        <a th:if="${prev}" th:href="@{/lesson/{id}(id=${prev.id})}" class="btn btn-outline-primary">
+            ← Prethodna
+        </a>
+        <span th:unless="${prev}"></span>
+
+        <a th:if="${next}" th:href="@{/lesson/{id}(id=${next.id})}" class="btn btn-primary">
+            Sledeća →
+        </a>
+        <a th:unless="${next}" href="/quiz" class="btn btn-success">
+            Idi na završni test →
+        </a>
+    </div>
+</div>
+</body>
+</html>

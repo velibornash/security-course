@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Rezultat')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="card p-5 text-center">
+        <div th:if="${attempt.passed}">
+            <div class="display-1 text-success mb-3">✓</div>
+            <h2 class="text-success">Čestitamo! Položili ste test.</h2>
+            <p class="lead" th:text="'Rezultat: ' + ${attempt.score} + ' / ' + ${attempt.totalQuestions} + ' (' + ${#numbers.formatDecimal(attempt.percentage,1,0)} + '%)'">90%</p>
+
+            <div class="alert alert-info">
+                <i class="bi bi-envelope"></i> Sertifikat je poslat na vasu email adresu.
+            </div>
+
+            <a th:href="@{/certificate/{id}(id=${attempt.id})}" class="btn btn-success btn-lg mt-3">
+                <i class="bi bi-download"></i> Preuzmi sertifikat (PDF)
+            </a>
+
+            <div th:if="${attempt.certificatePdfUrl}" class="mt-3">
+                <a th:href="${attempt.certificatePdfUrl}" class="btn btn-outline-success" target="_blank">
+                    <i class="bi bi-file-earmark-pdf"></i> Otvori sacuvani PDF
+                </a>
+            </div>
+        </div>
+        <div th:unless="${attempt.passed}">
+            <div class="display-1 text-danger mb-3">✗</div>
+            <h2 class="text-danger">Niste položili test</h2>
+            <p class="lead" th:text="'Rezultat: ' + ${attempt.score} + ' / ' + ${attempt.totalQuestions} + ' (' + ${#numbers.formatDecimal(attempt.percentage,1,0)} + '%)'">70%</p>
+            <p>Potrebno je najmanje 9 tačnih odgovora (90%).</p>
+            <a href="/quiz" class="btn btn-primary mt-3">Pokušaj ponovo</a>
+        </div>
+
+        <hr class="my-4">
+        <a href="/dashboard" class="btn btn-outline-secondary">Nazad na kurs</a>
+    </div>
+</div>
+</body>
+</html>

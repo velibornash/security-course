@@ -129,8 +129,7 @@ public class AdminController {
     @ResponseBody
     public Map<String, String> uploadImage(@RequestParam("file") MultipartFile file) throws Exception {
         String url = courseService.uploadImage(file);
-        // TinyMCE expects "location" key, others expect "url"
-        return Map.of("url", url, "location", url);
+        return Map.of("url", url);
     }
 
     @GetMapping("/upload-image/list")

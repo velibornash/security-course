@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: expo_course
+      POSTGRES_USER: expo
+      POSTGRES_PASSWORD: expo123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - appnet
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/expo_course
+      SPRING_DATASOURCE_USERNAME: expo
+      SPRING_DATASOURCE_PASSWORD: expo123
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:8080}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.gmail.com}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      - postgres
+    networks:
+      - appnet
+
+volumes:
+  pgdata:
+  uploads:
+
+networks:
+  appnet:

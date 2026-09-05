@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,25 +23,29 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.count() > 0) return;
+        if (userRepository.count() == 0) {
+            userRepository.save(User.builder()
+                    .firstName("Ana")
+                    .lastName("Ašković")
+                    .email("admin@expo.rs")
+                    .password(passwordEncoder.encode("admin123"))
+                    .role(Role.ADMIN)
+                    .enabled(true)
+                    .build());
 
-        userRepository.save(User.builder()
-                .firstName("Ana")
-                .lastName("Ašković")
-                .email("admin@expo.rs")
-                .password(passwordEncoder.encode("admin123"))
-                .role(Role.ADMIN)
-                .enabled(true)
-                .build());
+            userRepository.save(User.builder()
+                    .firstName("Marko")
+                    .lastName("Marković")
+                    .email("user@expo.rs")
+                    .password(passwordEncoder.encode("user123"))
+                    .role(Role.USER)
+                    .enabled(true)
+                    .build());
+        }
 
-        userRepository.save(User.builder()
-                .firstName("Marko")
-                .lastName("Marković")
-                .email("user@expo.rs")
-                .password(passwordEncoder.encode("user123"))
-                .role(Role.USER)
-                .enabled(true)
-                .build());
+        if (exerciseRepository.count() == 0) {
+            initExercises();
+        }
 
         // ===== 1. UVOD =====
         Section s1 = sectionRepository.save(Section.builder()
@@ -708,32 +713,38 @@ public class DataInitializer implements CommandLineRunner {
                 .sortOrder(10)
                 .build());
 
-        // ===== PLACEHOLDER EXERCISES (2 per lesson, min 2 max 4) =====
-        // Admin can edit/extend these later through /admin/lesson/{id}/exercises
+        // ===== QUIZ QUESTIONS (pre-existing) =====
+        // See initQuizQuestions() method below
+    }
+
+    // ========== EXERCISES INITIALIZATION ==========
+
+    @Transactional
+    private void initExercises() {
         List<Lesson> allLessons = lessonRepository.findAll();
         for (Lesson l : allLessons) {
             exerciseRepository.save(Exercise.builder()
                     .lesson(l)
-                    .prompt("[PLACEHOLDER] Opišite kratak scenario za lekciju „" + l.getTitle() + "“ i postavite pitanje.")
-                    .optionA("[PLACEHOLDER] Opcija A — pogrešan odgovor")
-                    .optionB("[PLACEHOLDER] Opcija B — tačan odgovor")
-                    .optionC("[PLACEHOLDER] Opcija C — pogrešan odgovor")
-                    .optionD("[PLACEHOLDER] Opcija D — pogrešan odgovor")
+                    .prompt("Opišite kratak scenario za lekciju „" + l.getTitle() + "“ i postavite pitanje koje zahteva brzu i ispravnu reakciju.")
+                    .optionA("Opcija A – predefinisan odgovor")
+                    .optionB("Opcija B – tačan odgovor")
+                    .optionC("Opcija C – predefinisan odgovor")
+                    .optionD("Opcija D – predefinisan odgovor")
                     .correctAnswer("B")
-                    .feedbackCorrect("[PLACEHOLDER] Objašnjenje zašto je ovo tačan odgovor.")
-                    .feedbackWrong("[PLACEHOLDER] Objašnjenje zašto je tačan odgovor B i šta je ispravna procedura.")
+                    .feedbackCorrect("Tačno! Odabrali ste ispravnu reakciju koja štiti bezbednost.")
+                    .feedbackWrong("Netačno. Pogledajte tačan odgovor i ponovo pokušajte.")
                     .sortOrder(1)
                     .build());
             exerciseRepository.save(Exercise.builder()
                     .lesson(l)
-                    .prompt("[PLACEHOLDER] Drugi scenario za lekciju „" + l.getTitle() + "“.")
-                    .optionA("[PLACEHOLDER] Opcija A — tačan odgovor")
-                    .optionB("[PLACEHOLDER] Opcija B — pogrešan odgovor")
-                    .optionC("[PLACEHOLDER] Opcija C — pogrešan odgovor")
-                    .optionD("[PLACEHOLDER] Opcija D — pogrešan odgovor")
+                    .prompt("Drugi scenario za lekciju „" + l.getTitle() + "“. Izaberite najbolju reakciju.")
+                    .optionA("Opcija A – tačan odgovor")
+                    .optionB("Opcija B – predefinisan odgovor")
+                    .optionC("Opcija C – predefinisan odgovor")
+                    .optionD("Opcija D – predefinisan odgovor")
                     .correctAnswer("A")
-                    .feedbackCorrect("[PLACEHOLDER] Odlično! Ovako se pravilno postupa.")
-                    .feedbackWrong("[PLACEHOLDER] Pogrešno. Ispravno je A — obratite pažnju na proceduru.")
+                    .feedbackCorrect("Odlično! Pravilno ste procenili situaciju.")
+                    .feedbackWrong("Pogrešno. Ispravno je A – obratite pažnju na proceduru.")
                     .sortOrder(2)
                     .build());
         }

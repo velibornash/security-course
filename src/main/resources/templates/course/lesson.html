@@ -31,7 +31,7 @@
                 <div>
                     <div class="text-uppercase tracking-wider small fw-semibold" style="letter-spacing: 2px; color: #a594c7;">SCENARIO</div>
                     <h3 class="fw-bold mb-0 text-white"
-                        th:text="${lesson.scenarioTitle != null and !#strings.isEmpty(lesson.scenarioTitle) ? lesson.scenarioTitle : 'Odabir u restriktivnom prolazu'}">
+                        th:text="${lesson.scenarioTitle != null and not #strings.isEmpty(lesson.scenarioTitle) ? lesson.scenarioTitle : 'Odabir u restriktivnom prolazu'}">
                         Odabir u restriktivnom prolazu
                     </h3>
                 </div>
@@ -47,7 +47,7 @@
         <!-- SCENARIO INTRO VIEW (Visible before Start) -->
         <div id="scenarioIntroView" class="p-4 p-md-5 text-center bg-light">
             <p class="lead text-dark mx-auto mb-4" style="max-width: 780px;"
-               th:text="${lesson.scenarioDescription != null and !#strings.isEmpty(lesson.scenarioDescription) ? lesson.scenarioDescription : 'Nalaziš se u restriktivnoj zoni kada uočiš situaciju koja zahteva brzu i ispravnu reakciju. Tvoj zadatak je da izabereš postupke koji čuvaju bezbednost i poštuju nadležnosti službi.'}">
+               th:text="${lesson.scenarioDescription != null and not #strings.isEmpty(lesson.scenarioDescription) ? lesson.scenarioDescription : 'Nalaziš se u restriktivnoj zoni kada uočiš situaciju koja zahteva brzu i ispravnu reakciju. Tvoj zadatak je da izabereš postupke koji čuvaju bezbednost i poštuju nadležnosti službi.'}">
                 Nalaziš se u restriktivnoj zoni...
             </p>
 
@@ -121,94 +121,26 @@
     </div>
 </div>
 
-<!-- EMBEDDED EXERCISE DATA FOR CLIENT-SIDE RUNNER -->
-<script th:inline="javascript">
-/*<![CDATA[*/
-    const exercisesData = /*[[${exercises}]]*/ [];
-/*]]>*/
-</script>
-
-<style>
-    .scenario-opt-btn {
-        background: #ffffff;
-        border: 1px solid #e1deea;
-        border-radius: 8px;
-        padding: 14px 18px;
-        text-align: left;
-        width: 100%;
-        color: #2b2538;
-        font-size: 0.98rem;
-        transition: all 0.15s ease-in-out;
-        cursor: pointer;
-        display: block;
-    }
-    .scenario-opt-btn:hover:not(:disabled) {
-        background: #f4f0fa;
-        border-color: #7b5ea7;
-        color: #1a1528;
-    }
-    .scenario-opt-btn:disabled {
-        cursor: default;
-        opacity: 0.95;
-    }
-    .scenario-opt-btn.is-correct {
-        background: #eaf7ee !important;
-        border-color: #28a745 !important;
-        color: #155724 !important;
-        font-weight: 500;
-    }
-    .scenario-opt-btn.is-wrong {
-        background: #fdf0f0 !important;
-        border-color: #dc3545 !important;
-        color: #721c24 !important;
-        text-decoration: line-through;
-    }
-    .user-bubble {
-        background: #ffffff;
-        border: 1px solid #e3e0ec;
-        border-radius: 12px;
-        padding: 12px 18px;
-        max-width: 80%;
-        margin-left: auto;
-        color: #272233;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .ai-bubble {
-        background: #f3eff9;
-        border-left: 4px solid #7b5ea7;
-        border-radius: 0 12px 12px 0;
-        padding: 14px 18px;
-        max-width: 85%;
-        margin-right: auto;
-        color: #211c2e;
-    }
-    .ai-bubble.is-error {
-        background: #fef2f2;
-        border-left-color: #dc3545;
-        color: #721c24;
-    }
-    .ai-bubble.is-success {
-        background: #f0fbf3;
-        border-left-color: #28a745;
-        color: #155724;
-    }
-</style>
+<!-- EMBEDDED EXERCISE DATA -->
+<input type="hidden" id="exercises-json" th:value="${exercises}"/>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    var exercisesData = /*!window.exercisesData||*/ [];
+
     if (!exercisesData || exercisesData.length === 0) return;
 
     let currentIndex = 0;
     let correctCount = 0;
 
-    const introView = document.getElementById('scenarioIntroView');
-    const activeView = document.getElementById('scenarioActiveView');
-    const statusBadge = document.getElementById('scenarioStatusBadge');
-    const historyBox = document.getElementById('scenarioHistory');
-    const currentBox = document.getElementById('currentQuestionBox');
-    const completeBox = document.getElementById('scenarioCompleteBox');
-    const btnStart = document.getElementById('btnStartScenario');
-    const btnRestart = document.getElementById('btnRestartScenario');
+    var introView = document.getElementById('scenarioIntroView');
+    var activeView = document.getElementById('scenarioActiveView');
+    var statusBadge = document.getElementById('scenarioStatusBadge');
+    var historyBox = document.getElementById('scenarioHistory');
+    var currentBox = document.getElementById('currentQuestionBox');
+    var completeBox = document.getElementById('scenarioCompleteBox');
+    var btnStart = document.getElementById('btnStartScenario');
+    var btnRestart = document.getElementById('btnRestartScenario');
 
     btnStart.addEventListener('click', function () {
         introView.style.display = 'none';
@@ -240,105 +172,102 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const q = exercisesData[currentIndex];
-        const options = [
+        var q = exercisesData[currentIndex];
+        var options = [
             { key: 'A', text: q.optionA },
             { key: 'B', text: q.optionB },
             { key: 'C', text: q.optionC },
             { key: 'D', text: q.optionD }
-        ].filter(opt => opt.text && opt.text.trim().length > 0);
+        ].filter(function(opt) { return opt.text && opt.text.trim().length > 0; });
 
-        let optionsHtml = options.map(opt => `
-            <button type="button" class="scenario-opt-btn" data-key="${opt.key}">
-                ${escapeHtml(opt.text)}
-            </button>
-        `).join('');
+        var optionsHtml = options.map(function(opt) {
+            return '<button type="button" class="scenario-opt-btn" data-key="' + opt.key + '">' + escapeHtml(opt.text) + '</button>';
+        }).join('');
 
-        currentBox.innerHTML = `
+        currentBox.innerHTML = '
             <div class="mb-4">
                 <div class="small text-muted mb-2 fw-semibold">Scenario AI</div>
                 <div class="p-3 bg-white rounded-3 border mb-3 shadow-sm" style="font-size: 1.05rem; font-weight: 500; color: #1c1829;">
-                    ${escapeHtml(q.prompt)}
+                    ' + escapeHtml(q.prompt) + '
                 </div>
                 <div class="d-flex flex-column gap-2" id="optionsContainer">
-                    ${optionsHtml}
+                    ' + optionsHtml + '
                 </div>
             </div>
             <div id="feedbackContainer" class="mt-3" style="display:none;"></div>
-        `;
+        ';
 
-        const optButtons = currentBox.querySelectorAll('.scenario-opt-btn');
-        optButtons.forEach(btn => {
+        var optButtons = currentBox.querySelectorAll('.scenario-opt-btn');
+        optButtons.forEach(function(btn) {
             btn.addEventListener('click', function () {
-                const selectedKey = this.getAttribute('data-key');
-                handleAnswer(q, selectedKey, this, optButtons);
+                var selectedKey = btn.getAttribute('data-key');
+                handleAnswer(q, selectedKey, btn, optButtons);
             });
         });
     }
 
     function handleAnswer(q, selectedKey, clickedBtn, allButtons) {
-        allButtons.forEach(b => b.disabled = true);
+        allButtons.forEach(function(b) { b.disabled = true; });
 
-        const isCorrect = (selectedKey === q.correctAnswer);
+        var isCorrect = (selectedKey === q.correctAnswer);
         if (isCorrect) correctCount++;
 
         if (isCorrect) {
             clickedBtn.classList.add('is-correct');
         } else {
             clickedBtn.classList.add('is-wrong');
-            allButtons.forEach(b => {
+            allButtons.forEach(function(b) {
                 if (b.getAttribute('data-key') === q.correctAnswer) {
                     b.classList.add('is-correct');
                 }
             });
         }
 
-        const feedbackBox = document.getElementById('feedbackContainer');
-        const feedbackText = isCorrect
+        var feedbackBox = document.getElementById('feedbackContainer');
+        var feedbackText = isCorrect
             ? (q.feedbackCorrect && q.feedbackCorrect.trim() ? q.feedbackCorrect : 'Tačno! Izabrali ste ispravan postupak.')
-            : (q.feedbackWrong && q.feedbackWrong.trim() ? q.feedbackWrong : `Pogrešan izbor. Tačan odgovor je opcija ${q.correctAnswer}.`);
+            : (q.feedbackWrong && q.feedbackWrong.trim() ? q.feedbackWrong : 'Pogrešan izbor. Tačan odgovor je opcija ' + q.correctAnswer + '.');
 
-        const isLast = (currentIndex === exercisesData.length - 1);
-        const nextButtonText = isLast ? 'Završi vežbu' : 'Sledeća odluka →';
+        var isLast = (currentIndex === exercisesData.length - 1);
+        var nextButtonText = isLast ? 'Završi vežbu' : 'Sledeća odluka →';
 
-        feedbackBox.innerHTML = `
-            <div class="ai-bubble mb-3 ${isCorrect ? 'is-success' : 'is-error'}">
-                <div class="small fw-bold mb-1">${isCorrect ? '✓ Tačno!' : '✗ Pogrešan izbor'}</div>
-                <div>${escapeHtml(feedbackText)}</div>
-                ${!isCorrect ? `<div class="mt-1 small"><strong>Tačan odgovor:</strong> Opcija ${q.correctAnswer}</div>` : ''}
+        feedbackBox.innerHTML = '
+            <div class="ai-bubble mb-3 ' + (isCorrect ? 'is-success' : 'is-error') + '">
+                <div class="small fw-bold mb-1">' + (isCorrect ? '✓ Tačno!' : '✗ Pogrešan izbor') + '</div>
+                <div>' + escapeHtml(feedbackText) + '</div>
+                ' + (!isCorrect ? '<div class="mt-1 small"><strong>Tačan odgovor:</strong> Opcija ' + q.correctAnswer + '</div>' : '') + '
             </div>
             <div class="text-end">
                 <button type="button" class="btn btn-primary px-4 py-2" id="btnNextDecision">
-                    ${nextButtonText}
+                    ' + nextButtonText + '
                 </button>
             </div>
-        `;
+        ';
         feedbackBox.style.display = 'block';
 
         document.getElementById('btnNextDecision').addEventListener('click', function () {
-            // Push to history as chat-like bubbles
-            const selectedOpt = [
+            var selectedOpt = [
                 { key: 'A', text: q.optionA },
                 { key: 'B', text: q.optionB },
                 { key: 'C', text: q.optionC },
                 { key: 'D', text: q.optionD }
-            ].find(o => o.key === selectedKey);
+            ].find(function(o) { return o.key === selectedKey; });
 
-            historyBox.innerHTML += `
+            historyBox.innerHTML += '
                 <div class="mb-4">
                     <div class="small text-muted mb-1 fw-semibold">Scenario AI</div>
                     <div class="p-3 bg-white rounded-3 border mb-2" style="color: #1c1829;">
-                        ${escapeHtml(q.prompt)}
+                        ' + escapeHtml(q.prompt) + '
                     </div>
                     <div class="user-bubble mb-2">
-                        ${escapeHtml(selectedOpt ? selectedOpt.text : selectedKey)}
+                        ' + escapeHtml(selectedOpt ? selectedOpt.text : selectedKey) + '
                     </div>
-                    <div class="ai-bubble ${isCorrect ? 'is-success' : 'is-error'}">
-                        <div class="small fw-bold mb-1">${isCorrect ? '✓ Tačno' : '✗ Netačno'}</div>
-                        <div>${escapeHtml(feedbackText)}</div>
+                    <div class="ai-bubble ' + (isCorrect ? 'is-success' : 'is-error') + '">
+                        <div class="small fw-bold mb-1">' + (isCorrect ? '✓ Tačno' : '✗ Netačno') + '</div>
+                        <div>' + escapeHtml(feedbackText) + '</div>
                     </div>
                 </div>
-            `;
+            ';
 
             currentIndex++;
             renderCurrentQuestion();
@@ -352,13 +281,13 @@ document.addEventListener('DOMContentLoaded', function () {
         statusBadge.style.background = '#1e1b2e';
         statusBadge.style.color = '#ffffff';
 
-        const summaryEl = document.getElementById('completionSummaryText');
-        summaryEl.textContent = `Odlično razumeš krizni redosled. Uspešno ste rešili vežbu (${correctCount}/${exercisesData.length} tačnih odgovora). Prepoznaješ šta treba prijaviti, kada se udaljiti i kako sarađivati bez preuzimanja tuđih ovlašćenja.`;
+        var summaryEl = document.getElementById('completionSummaryText');
+        summaryEl.textContent = 'Odlično razumeš krizni redosled. Uspešno ste rešili vežbu (' + correctCount + '/' + exercisesData.length + ' tačnih odgovora). Prepoznaješ šta treba prijaviti, kada se udaljiti i kako sarađivati bez preuzimanja tuđih ovlašćenja.';
     }
 
     function escapeHtml(text) {
         if (!text) return '';
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }

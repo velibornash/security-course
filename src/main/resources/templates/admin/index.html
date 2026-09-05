@@ -69,6 +69,7 @@
                 </div>
                 <div>
                     <a th:href="@{/admin/lesson/{id}/edit(id=${lesson.id})}" class="btn btn-sm btn-outline-primary">Izmeni</a>
+                    <a th:href="@{/admin/lesson/{id}/exercises(id=${lesson.id})}" class="btn btn-sm btn-outline-success">Vežbe</a>
                     <form th:action="@{/admin/lesson/{id}/delete(id=${lesson.id})}" method="post" class="d-inline"
                           onsubmit="return confirm('Obrisati lekciju?')">
                         <button class="btn btn-sm btn-outline-danger">Obrisi</button>

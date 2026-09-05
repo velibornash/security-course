@@ -1,5 +1,6 @@
 package com.expo.security.controller;
 
+import com.expo.security.model.Exercise;
 import com.expo.security.model.Lesson;
 import com.expo.security.model.QuizQuestion;
 import com.expo.security.model.Section;
@@ -209,5 +210,87 @@ public class AdminController {
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/quiz";
+    }
+
+    // ========== EXERCISES (Pokreni vežbu) ==========
+
+    @GetMapping("/lesson/{id}/exercises")
+    public String manageExercises(@PathVariable Long id, Model model) {
+        Lesson lesson = courseService.getLesson(id);
+        List<Exercise> exercises = courseService.getExercisesForLesson(id);
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("exercises", exercises);
+        return "admin/exercises";
+    }
+
+    @PostMapping("/lesson/{id}/exercise/add")
+    public String addExercise(@PathVariable Long id,
+                              @RequestParam String prompt,
+                              @RequestParam String optionA,
+                              @RequestParam String optionB,
+                              @RequestParam String optionC,
+                              @RequestParam String optionD,
+                              @RequestParam String correctAnswer,
+                              @RequestParam(required = false) String feedbackCorrect,
+                              @RequestParam(required = false) String feedbackWrong,
+                              @RequestParam int sortOrder,
+                              RedirectAttributes ra) {
+        try {
+            courseService.addExercise(id, prompt, optionA, optionB, optionC, optionD,
+                    correctAnswer, feedbackCorrect, feedbackWrong, sortOrder);
+            ra.addFlashAttribute("success", "Vežba dodata");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/lesson/" + id + "/exercises";
+    }
+
+    @PostMapping("/exercise/{id}/edit")
+    public String editExercise(@PathVariable Long id,
+                               @RequestParam String prompt,
+                               @RequestParam String optionA,
+                               @RequestParam String optionB,
+                               @RequestParam String optionC,
+                               @RequestParam String optionD,
+                               @RequestParam String correctAnswer,
+                               @RequestParam(required = false) String feedbackCorrect,
+                               @RequestParam(required = false) String feedbackWrong,
+                               @RequestParam int sortOrder,
+                               RedirectAttributes ra) {
+        try {
+            courseService.updateExercise(id, prompt, optionA, optionB, optionC, optionD,
+                    correctAnswer, feedbackCorrect, feedbackWrong, sortOrder);
+            ra.addFlashAttribute("success", "Vežba ažurirana");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/lesson/" + courseService.getExercise(id).getLesson().getId() + "/exercises";
+    }
+
+    @PostMapping("/exercise/{id}/delete")
+    public String deleteExercise(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            Long lessonId = courseService.getExercise(id).getLesson().getId();
+            courseService.deleteExercise(id);
+            ra.addFlashAttribute("success", "Vežba obrisana");
+            return "redirect:/admin/lesson/" + lessonId + "/exercises";
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin";
+        }
+    }
+
+    @PostMapping("/lesson/{id}/scenario/edit")
+    public String editScenarioInfo(@PathVariable Long id,
+                                   @RequestParam(required = false) String scenarioTitle,
+                                   @RequestParam(required = false) String scenarioDescription,
+                                   RedirectAttributes ra) {
+        try {
+            courseService.updateLessonScenario(id, scenarioTitle, scenarioDescription);
+            ra.addFlashAttribute("success", "Informacije o scenariju ažurirane");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/lesson/" + id + "/exercises";
     }
 }

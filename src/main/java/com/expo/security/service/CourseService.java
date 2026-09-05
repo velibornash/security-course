@@ -25,6 +25,7 @@ public class CourseService {
     private final QuizQuestionRepository questionRepository;
     private final UserProgressRepository progressRepository;
     private final QuizAttemptRepository attemptRepository;
+    private final ExerciseRepository exerciseRepository;
     private final PdfCertificateService pdfService;
     private final EmailService emailService;
 
@@ -285,5 +286,66 @@ public class CourseService {
         Files.copy(image.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
         System.out.println("Uploaded image to: " + target.toAbsolutePath());
         return "/uploads/" + filename;
+    }
+
+    // ========== EXERCISES (Pokreni vežbu) ==========
+
+    public List<Exercise> getExercisesForLesson(Long lessonId) {
+        return exerciseRepository.findByLessonIdOrderBySortOrderAsc(lessonId);
+    }
+
+    public Exercise getExercise(Long id) {
+        return exerciseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vežba nije pronađena"));
+    }
+
+    @Transactional
+    public Exercise addExercise(Long lessonId, String prompt, String optionA, String optionB,
+                                String optionC, String optionD, String correctAnswer,
+                                String feedbackCorrect, String feedbackWrong, int sortOrder) {
+        Lesson lesson = getLesson(lessonId);
+        Exercise ex = Exercise.builder()
+                .lesson(lesson)
+                .prompt(prompt)
+                .optionA(optionA)
+                .optionB(optionB)
+                .optionC(optionC)
+                .optionD(optionD)
+                .correctAnswer(correctAnswer)
+                .feedbackCorrect(feedbackCorrect != null ? feedbackCorrect : "Tačno!")
+                .feedbackWrong(feedbackWrong != null ? feedbackWrong : "Netačno. Pokušajte ponovo.")
+                .sortOrder(sortOrder)
+                .build();
+        return exerciseRepository.save(ex);
+    }
+
+    @Transactional
+    public Exercise updateExercise(Long id, String prompt, String optionA, String optionB,
+                                   String optionC, String optionD, String correctAnswer,
+                                   String feedbackCorrect, String feedbackWrong, int sortOrder) {
+        Exercise ex = getExercise(id);
+        ex.setPrompt(prompt);
+        ex.setOptionA(optionA);
+        ex.setOptionB(optionB);
+        ex.setOptionC(optionC);
+        ex.setOptionD(optionD);
+        ex.setCorrectAnswer(correctAnswer);
+        ex.setFeedbackCorrect(feedbackCorrect != null ? feedbackCorrect : "Tačno!");
+        ex.setFeedbackWrong(feedbackWrong != null ? feedbackWrong : "Netačno. Pokušajte ponovo.");
+        ex.setSortOrder(sortOrder);
+        return exerciseRepository.save(ex);
+    }
+
+    @Transactional
+    public void deleteExercise(Long id) {
+        exerciseRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Lesson updateLessonScenario(Long lessonId, String scenarioTitle, String scenarioDescription) {
+        Lesson lesson = getLesson(lessonId);
+        lesson.setScenarioTitle(scenarioTitle);
+        lesson.setScenarioDescription(scenarioDescription);
+        return lessonRepository.save(lesson);
     }
 }

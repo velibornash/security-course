@@ -1,5 +1,6 @@
 package com.expo.security.controller;
 
+import com.expo.security.model.Exercise;
 import com.expo.security.model.Lesson;
 import com.expo.security.model.QuizAttempt;
 import com.expo.security.model.Section;
@@ -67,11 +68,14 @@ public class CourseController {
         // Mark as completed when viewing
         courseService.markLessonCompleted(user, id);
 
+        List<Exercise> exercises = courseService.getExercisesForLesson(id);
+
         model.addAttribute("lesson", lesson);
         model.addAttribute("prev", prev);
         model.addAttribute("next", next);
         model.addAttribute("currentIndex", currentIndex + 1);
         model.addAttribute("totalLessons", allLessons.size());
+        model.addAttribute("exercises", exercises);
         return "course/lesson";
     }
 

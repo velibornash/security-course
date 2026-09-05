@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Vežbe')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Vežbe za lekciju</h2>
+            <p class="text-muted mb-0"><strong th:text="${lesson.title}">Lekcija</strong></p>
+        </div>
+        <a href="/admin" class="btn btn-outline-secondary btn-sm">Nazad na admin</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- SCENARIO HEADER CONFIGURATION -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+            <span>Podešavanje scenarija lekcije</span>
+            <span class="badge bg-secondary">Zaglavlje vežbe</span>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/admin/lesson/{id}/scenario/edit(id=${lesson.id})}" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Naziv scenarija (naslov na kartici vežbe)</label>
+                    <input type="text" name="scenarioTitle" class="form-control"
+                           th:value="${lesson.scenarioTitle}"
+                           placeholder="Npr: Odabir u restriktivnom prolazu">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Opis scenarija (uvodni tekst koji korisnik čita pre pokretanja)</label>
+                    <textarea name="scenarioDescription" class="form-control" rows="3"
+                              th:text="${lesson.scenarioDescription}"
+                              placeholder="Npr: Nalaziš se u restriktivnoj zoni kada uočiš napušten predmet..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-sm btn-dark">Sačuvaj zaglavlje scenarija</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <div>
+            <strong>Pravila:</strong> Svaka lekcija ima <strong>minimum 2</strong> i <strong>maksimum 4</strong> pitanja za vežbu.
+            Trenutno: <strong th:text="${#lists.size(exercises)} + ' / 4'">0 / 4</strong>
+        </div>
+        <div>
+            <span th:if="${#lists.size(exercises) < 2}" class="badge bg-warning text-dark">Potrebno još pitanja (min. 2)</span>
+            <span th:if="${#lists.size(exercises) >= 2 and #lists.size(exercises) <= 4}" class="badge bg-success">Optimalan broj</span>
+            <span th:if="${#lists.size(exercises) >= 4}" class="badge bg-danger">Maksimum (4/4)</span>
+        </div>
+    </div>
+
+    <!-- ADD NEW EXERCISE (Only if < 4) -->
+    <div th:if="${#lists.size(exercises) < 4}" class="card mb-4 border-primary">
+        <div class="card-header bg-primary text-white fw-bold">+ Nova vežba (Pitanje <span th:text="${#lists.size(exercises) + 1}">1</span> od max 4)</div>
+        <div class="card-body">
+            <form th:action="@{/admin/lesson/{id}/exercise/add(id=${lesson.id})}" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Pitanje / prompt</label>
+                    <textarea name="prompt" class="form-control" rows="2" required
+                              placeholder="Npr: Primetio si napušten predmet pored prolaza. Šta radiš prvo?"></textarea>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija A</label>
+                        <input type="text" name="optionA" class="form-control" required placeholder="Opcija A">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija B</label>
+                        <input type="text" name="optionB" class="form-control" required placeholder="Opcija B">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija C</label>
+                        <input type="text" name="optionC" class="form-control" required placeholder="Opcija C">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Opcija D</label>
+                        <input type="text" name="optionD" class="form-control" required placeholder="Opcija D">
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Tačan odgovor</label>
+                        <select name="correctAnswer" class="form-select" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Redosled</label>
+                        <input type="number" name="sortOrder" class="form-control"
+                               th:value="${#lists.size(exercises) + 1}" min="1" max="4" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-success fw-bold">Povratna informacija za tačan odgovor</label>
+                    <textarea name="feedbackCorrect" class="form-control" rows="2"
+                              placeholder="Npr: Tačno! Zvanična prijava i držanje bezbedne distance je prvi i ključni korak."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-danger fw-bold">Povratna informacija za pogrešan odgovor</label>
+                    <textarea name="feedbackWrong" class="form-control" rows="2"
+                              placeholder="Npr: Ne preuzimaj ovlašćenja obezbeđenja. Tvoja uloga je prijava i saradnja."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">+ Dodaj vežbu</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${#lists.size(exercises) >= 4}" class="alert alert-secondary">
+        Dostignut je maksimalan broj pitanja za ovu lekciju (4/4). Da biste dodali novo, prvo obrišite neko od postojećih.
+    </div>
+
+    <!-- LIST EXISTING EXERCISES -->
+    <h4 class="mt-4 mb-3">Postojeća pitanja vežbe</h4>
+
+    <div th:if="${#lists.isEmpty(exercises)}" class="alert alert-warning">
+        Nema vežbi za ovu lekciju. Dodajte minimum 2 vežbe pomoću forme iznad.
+    </div>
+
+    <div th:each="ex, iter : ${exercises}" class="card mb-3 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>
+                <strong th:text="'#' + ${ex.sortOrder}">#1</strong> —
+                <span th:text="${ex.prompt}">Pitanje...</span>
+            </span>
+            <span class="badge bg-success" th:text="'Tačno: ' + ${ex.correctAnswer}">Tačno: A</span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-md-6"><small><strong>A:</strong> <span th:text="${ex.optionA}"></span></small></div>
+                <div class="col-md-6"><small><strong>B:</strong> <span th:text="${ex.optionB}"></span></small></div>
+                <div class="col-md-6"><small><strong>C:</strong> <span th:text="${ex.optionC}"></span></small></div>
+                <div class="col-md-6"><small><strong>D:</strong> <span th:text="${ex.optionD}"></span></small></div>
+            </div>
+            <div class="mb-2">
+                <small class="text-success"><strong>✓ Tačno:</strong> <span th:text="${ex.feedbackCorrect}"></span></small><br>
+                <small class="text-danger"><strong>✗ Netačno:</strong> <span th:text="${ex.feedbackWrong}"></span></small>
+            </div>
+
+            <div class="mt-3">
+                <button class="btn btn-sm btn-outline-primary" type="button"
+                        data-bs-toggle="collapse"
+                        th:data-bs-target="'#edit-' + ${ex.id}">
+                    Izmeni
+                </button>
+                <form th:action="@{/admin/exercise/{id}/delete(id=${ex.id})}" method="post" class="d-inline"
+                      onsubmit="return confirm('Obrisati ovo pitanje vežbe?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Obriši</button>
+                </form>
+            </div>
+
+            <div class="collapse mt-3" th:id="'edit-' + ${ex.id}">
+                <div class="card card-body bg-light">
+                    <form th:action="@{/admin/exercise/{id}/edit(id=${ex.id})}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Pitanje / prompt</label>
+                            <textarea name="prompt" class="form-control" rows="2" required th:text="${ex.prompt}"></textarea>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Opcija A</label>
+                                <input type="text" name="optionA" class="form-control" required th:value="${ex.optionA}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Opcija B</label>
+                                <input type="text" name="optionB" class="form-control" required th:value="${ex.optionB}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Opcija C</label>
+                                <input type="text" name="optionC" class="form-control" required th:value="${ex.optionC}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Opcija D</label>
+                                <input type="text" name="optionD" class="form-control" required th:value="${ex.optionD}">
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tačan odgovor</label>
+                                <select name="correctAnswer" class="form-select" required>
+                                    <option value="A" th:selected="${ex.correctAnswer == 'A'}">A</option>
+                                    <option value="B" th:selected="${ex.correctAnswer == 'B'}">B</option>
+                                    <option value="C" th:selected="${ex.correctAnswer == 'C'}">C</option>
+                                    <option value="D" th:selected="${ex.correctAnswer == 'D'}">D</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Redosled</label>
+                                <input type="number" name="sortOrder" class="form-control" min="1" max="4" required
+                                       th:value="${ex.sortOrder}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-success fw-bold">Povratna informacija (tačan)</label>
+                            <textarea name="feedbackCorrect" class="form-control" rows="2" th:text="${ex.feedbackCorrect}"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-danger fw-bold">Povratna informacija (pogrešan)</label>
+                            <textarea name="feedbackWrong" class="form-control" rows="2" th:text="${ex.feedbackWrong}"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sačuvaj izmene</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

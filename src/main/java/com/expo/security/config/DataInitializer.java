@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
@@ -15,6 +17,7 @@ public class DataInitializer implements CommandLineRunner {
     private final SectionRepository sectionRepository;
     private final LessonRepository lessonRepository;
     private final QuizQuestionRepository questionRepository;
+    private final ExerciseRepository exerciseRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -704,5 +707,35 @@ public class DataInitializer implements CommandLineRunner {
                 .correctAnswer("B")
                 .sortOrder(10)
                 .build());
+
+        // ===== PLACEHOLDER EXERCISES (2 per lesson, min 2 max 4) =====
+        // Admin can edit/extend these later through /admin/lesson/{id}/exercises
+        List<Lesson> allLessons = lessonRepository.findAll();
+        for (Lesson l : allLessons) {
+            exerciseRepository.save(Exercise.builder()
+                    .lesson(l)
+                    .prompt("[PLACEHOLDER] Opišite kratak scenario za lekciju „" + l.getTitle() + "“ i postavite pitanje.")
+                    .optionA("[PLACEHOLDER] Opcija A — pogrešan odgovor")
+                    .optionB("[PLACEHOLDER] Opcija B — tačan odgovor")
+                    .optionC("[PLACEHOLDER] Opcija C — pogrešan odgovor")
+                    .optionD("[PLACEHOLDER] Opcija D — pogrešan odgovor")
+                    .correctAnswer("B")
+                    .feedbackCorrect("[PLACEHOLDER] Objašnjenje zašto je ovo tačan odgovor.")
+                    .feedbackWrong("[PLACEHOLDER] Objašnjenje zašto je tačan odgovor B i šta je ispravna procedura.")
+                    .sortOrder(1)
+                    .build());
+            exerciseRepository.save(Exercise.builder()
+                    .lesson(l)
+                    .prompt("[PLACEHOLDER] Drugi scenario za lekciju „" + l.getTitle() + "“.")
+                    .optionA("[PLACEHOLDER] Opcija A — tačan odgovor")
+                    .optionB("[PLACEHOLDER] Opcija B — pogrešan odgovor")
+                    .optionC("[PLACEHOLDER] Opcija C — pogrešan odgovor")
+                    .optionD("[PLACEHOLDER] Opcija D — pogrešan odgovor")
+                    .correctAnswer("A")
+                    .feedbackCorrect("[PLACEHOLDER] Odlično! Ovako se pravilno postupa.")
+                    .feedbackWrong("[PLACEHOLDER] Pogrešno. Ispravno je A — obratite pažnju na proceduru.")
+                    .sortOrder(2)
+                    .build());
+        }
     }
 }

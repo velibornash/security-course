@@ -21,6 +21,19 @@
                     </div>
                     <button class="btn btn-primary w-100">Prijavi se</button>
                 </form>
+                <hr>
+                <div class="text-center">
+                    <form th:action="@{/admin/backup}" method="post">
+                        <button class="btn btn-outline-primary w-50" type="submit">
+                            <i class="fas fa-save"></i> Backup trenutno stanje
+                        </button>
+                    </form>
+                    <form th:action="@{/admin/init-course}" method="post" class="mt-2">
+                        <button class="btn btn-outline-secondary w-50" type="submit">
+                            <i class="fas fa-redo"></i> Inicijalizuj kurs iz backupa
+                        </button>
+                    </form>
+                </div>
                 <p class="text-center mt-3 mb-0">
                     Nemate nalog? <a th:href="@{/register}">Registrujte se</a>
                 </p>

@@ -31,6 +31,12 @@ public class Lesson {
     @Column(columnDefinition = "TEXT")
     private String scenarioDescription;
 
+    @Column(columnDefinition = "TEXT")
+    private String scenarioCompletePositive;
+
+    @Column(columnDefinition = "TEXT")
+    private String scenarioCompleteNegative;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")
     private Section section;

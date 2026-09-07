@@ -17,8 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class CourseController {
 
     private final CourseService courseService;
+    private final ObjectMapper objectMapper;
     private final UserService userService;
 
     @GetMapping({"/", "/dashboard"})
@@ -76,6 +77,21 @@ public class CourseController {
         model.addAttribute("currentIndex", currentIndex + 1);
         model.addAttribute("totalLessons", allLessons.size());
         model.addAttribute("exercises", exercises);
+        List<Map<String, Object>> exerciseData = new ArrayList<>();
+        for (Exercise e : exercises) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("id", e.getId());
+            m.put("prompt", e.getPrompt());
+            m.put("optionA", e.getOptionA());
+            m.put("optionB", e.getOptionB());
+            m.put("optionC", e.getOptionC());
+            m.put("optionD", e.getOptionD());
+            m.put("correctAnswer", e.getCorrectAnswer());
+            m.put("feedbackCorrect", e.getFeedbackCorrect());
+            m.put("feedbackWrong", e.getFeedbackWrong());
+            exerciseData.add(m);
+        }
+        model.addAttribute("exerciseData", exerciseData);
         return "course/lesson";
     }
 

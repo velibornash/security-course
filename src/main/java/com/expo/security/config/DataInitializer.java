@@ -43,6 +43,10 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
         }
 
+        if (lessonRepository.count() > 0) {
+            return;
+        }
+
         if (exerciseRepository.count() == 0) {
             initExercises();
         }
@@ -170,15 +174,15 @@ public class DataInitializer implements CommandLineRunner {
                             <tbody>
                                 <tr><td>Na označenoj zoni vidiš da zona nije u tvom opsegu pristupa</td><td>Zaustavi se i ne ulazi dalje. Proveri akreditaciju i smernice za kretanje.</td></tr>
                                 <tr><td>Nisi siguran da li je pristup odobren</td><td>Zadrži se na mestu i pitaj ovlašćeno lice ili obezbeđenje pre ulaska.</td></tr>
-                                <tr><td>Shvatio si da si ušao u neodobrenu zonu</td><td>Odmah se bezbedno povruci istim ili najbližim dozvoljenim putem i prijavi grešku.</td></tr>
+                                <tr><td>Shvatio si da si ušao u neodobrenu zonu</td><td>Odmah se bezbedno povuci istim ili najbližim dozvoljenim putem i prijavi grešku.</td></tr>
                                 <tr><td>Akreditacija ne odgovara ulazu ili prostoru</td><td>Ne pokušavaj da nastaviš kretanje dok se ne dobije jasno uputstvo.</td></tr>
                             </tbody>
                         </table>
 
                         <h4>Koraci bezbednog ulaska nakon pogrešnog ulaska</h4>
                         <ol>
-                            <li><strong>Stani odmah.</strong> Nemoj da nastavljaš kretanje, ne preumeravaj se nasumično i ne pokušavaj da „brzo prođeš" kroz zonu.</li>
-                            <li><strong>Orijentisi se i povuci se bezbedno.</strong> Vrati se najbližim dozvoljenim putem ili po uputstvu koje vidiš na lokaciji.</li>
+                            <li><strong>Stani odmah.</strong> Nemoj da nastavljaš kretanje, ne preusmeravaj se nasumično i ne pokušavaj da „brzo prođeš" kroz zonu.</li>
+                            <li><strong>Orijentiši se i povuci se bezbedno.</strong> Vrati se najbližim dozvoljenim putem ili po uputstvu koje vidiš na lokaciji.</li>
                             <li><strong>Obavesti ovlašćeno lice.</strong> Prijavi da si greškom ušao u neodobrenu zonu i reci gde se trenutno nalaziš.</li>
                             <li><strong>Postupi po dobijenom uputstvu.</strong> Možeš dobiti nalog da ostaneš na mestu, da se vratiš drugim putem ili da se javiš nadležnoj službi.</li>
                         </ol>
@@ -208,7 +212,7 @@ public class DataInitializer implements CommandLineRunner {
                         </ul>
 
                         <h4>Prijavljivanje bez nagađanja</h4>
-                        <p>Primenite promenu u prostoru koriste isključivo činjenicama. Razlika između „video sam otvorena vrata", „neko nešto sumnjivo radi" menja kvalitet prijave.</p>
+                        <p>Zapažanja prenosite nadležnima koristeći isključivo činjenice. Razlika između „video sam otvorena vrata", „neko nešto sumnjivo radi" menja kvalitet prijave.</p>
 
                         <h4>Diskrecija je deo posla</h4>
                         <p>Ne delite raspored, propusnice, kretanje ili druge osetljive informacije sa osobama koje ne trebaju znati. Kratka i lična komunikacija smanjuje rizik od grešaka.</p>
@@ -230,7 +234,7 @@ public class DataInitializer implements CommandLineRunner {
                         <ul>
                             <li>Osmatranje sistema obezbeđenja: zadržavanje kod kamera, čitača kartica, vrata ili kontrolnih punktova bez jasnog razloga.</li>
                             <li>Fotografisanje tehničkih ulaza i osetljivih tačaka: snimanja mesta koja nisu namenjena javnosti.</li>
-                            <li>Pokušaj prolaska bez provere: ulazak za drugih lica, zaobilaženje kontrole ili insistiranje na prolazu van procedure.</li>
+                            <li>Pokušaj prolaska bez provere: ulazak za drugim licima, zaobilaženje kontrole ili insistiranje na prolazu van procedure.</li>
                         </ul>
                         <p>Bezbednosno korisno pitanje nije „ko je ta osoba?", nego „šta ta osoba radi, gde se nalazi i da li to odgovara pravilima kretanja i pristupa". Tako se izbegavaju glasine i pretpostavke.</p>
 
@@ -267,7 +271,7 @@ public class DataInitializer implements CommandLineRunner {
                             <li><strong>Proveri vrata odmah nakon prolaza.</strong> Ne oslanjaj se na to da će se vrata sama zatvoriti kako treba. Kratak pogled unazad pomaže da primetiš da li je neko krenuo za tobom.</li>
                             <li><strong>Koristi samo svoju akreditaciju.</strong> Tvoja bedž/kartica važi samo za tebe i za odobreni prolaz. Ne otvaraj vrata drugoj osobi i ne zadržavaj ih duže nego što je potrebno da prođeš bezbedno.</li>
                             <li><strong>Zaustavi pokušaj prolaza mirnim putem.</strong> Dovoljno je kratko i jasno upozorenje, na primer: „Molim vas, pokažite akreditaciju" ili „Sačekajte proveru". Ton treba da bude profesionalan, bez rasprave i bez fizičkog kontakta.</li>
-                            <li><strong>Ako osoba nema odgovarajuće ovlašćenje, zadrži razmak i pozovi obezbeđenje.</strong> Ne pokušaj da procenjuješ razlog njegovog ponašanja niti da sam rešavaš situaciju. Prijavi šta i gde, gde se desilo i kako je osoba pokušala da prođe.</li>
+                            <li><strong>Ako osoba nema odgovarajuće ovlašćenje, zadrži razmak i pozovi obezbeđenje.</strong> Ne pokušaj da procenjuješ razlog njegovog ponašanja niti da sam rešavaš situaciju. Prijavi šta i gde se desilo i kako je osoba pokušala da prođe.</li>
                             <li><strong>Prati dalje uputstvo obezbeđenja ili nadležnog lica.</strong> Kada je rizik prijavljen, tvoja uloga je da ostaneš smiren i omogućiš da ovlašćeno lice preuzme kontrolu.</li>
                         </ol>
                         """)
@@ -329,7 +333,7 @@ public class DataInitializer implements CommandLineRunner {
                 .title("Zabranjeni predmeti i izvori rizika")
                 .content("""
                         <h3>Zabranjeni predmeti</h3>
-                        <p>Po ulasku u restriktivnu zonu, važno je da znate da se ne procenjuje samo <strong>šta je predmet</strong>, već <strong>da li je njegovo unošenje dozvoljeno</strong>. Neki predmeti su u praksi uvek problematični, kao što su oružje, eksplozivne i zapaljive materije, dok su za dronove, poput dronova, odlučujući posebna dozvola i zvanična pravila.</p>
+                        <p>Po ulasku u restriktivnu zonu, važno je da znate da se ne procenjuje samo <strong>šta je predmet</strong>, već <strong>da li je njegovo unošenje dozvoljeno</strong>. Neki predmeti su u praksi uvek problematični, kao što su oružje, eksplozivne i zapaljive materije, dok su za dronove i sličnu bespilotnu opremu odlučujući posebna dozvola i zvanična pravila.</p>
 
                         <table class="table">
                             <thead><tr><th>Kategorija</th><th>Rizik</th><th>Očekivana prijava</th></tr></thead>
@@ -337,7 +341,7 @@ public class DataInitializer implements CommandLineRunner {
                                 <tr><td>Vatreno i drugo oružje</td><td>Visok bezbednosni rizik i stroga kontrola pristupa</td><td>Odmah obavestiti nadležnu službu i postupiti po uputstvu</td></tr>
                                 <tr><td>Eksplozivne materije i sredstva</td><td>Ozbiljna opasnost za ljude, objekte i opremu</td><td>Bez zadržavanja, prijava obezbeđenju ili ovlašćenom licu</td></tr>
                                 <tr><td>Zapaljive i lako zapaljive materije</td><td>Povećan rizik od požara i širenja incidenta</td><td>Prijava pre unošenja ili pri uočavanju u zoni</td></tr>
-                                <tr><td>Dronovi slična bespilotna oprema</td><td>Moguće narušavanje zaštite prostora i privatnosti</td><td>Prijava nadležnoj službi po uočavanju u zoni, radi provere dozvole</td></tr>
+                                <tr><td>Dronovi i slična bespilotna oprema</td><td>Moguće narušavanje zaštite prostora i privatnosti</td><td>Prijava nadležnoj službi po uočavanju u zoni, radi provere dozvole</td></tr>
                             </tbody>
                         </table>
 
@@ -362,8 +366,8 @@ public class DataInitializer implements CommandLineRunner {
 
                         <h4>Tri koraka ponašanja</h4>
                         <ul>
-                            <li><strong>Vidi:</strong> uoči predmet i okolinu bez priđlaženja.</li>
-                            <li><strong>Prepoznaj:</strong> primeti da li je predmet ostavljen bez nadzora, neobično postavljen ili nalazi se na mestu gde ne pripada.</li>
+                            <li><strong>Vidi:</strong> uoči predmet i okolinu bez prilaženja.</li>
+                            <li><strong>Prepoznaj:</strong> primeti da li je predmet ostavljen bez nadzora, neobično postavljen ili se nalazi na mestu gde ne pripada.</li>
                             <li><strong>Prijavi:</strong> prenesi tačne informacije i prepusti dalje postupanje ovlašćenim licima.</li>
                         </ul>
                         <p>Ovakav redosled smanjuje mogućnost pogrešne procene i pomaže da se procedura pokrene brzo, mirno i dosledno.</p>
@@ -371,7 +375,7 @@ public class DataInitializer implements CommandLineRunner {
                         <h4>Koraci protokola za sumnjiv predmet</h4>
                         <ol>
                             <li><strong>Uočavanje sa bezbedne udaljenosti.</strong> Zastavi se na mestu sa kog jasno vidiš predmet i neposrednu okolinu, bez priilaska i bez pokušaja da ga pomeriš ili otvoriš. Posmatraj samo ono što je vidljivo: gde se predmet nalazi, ko je u blizini i da li izgleda napušteno.</li>
-                            <li><strong>Proceni okolinu, ne sadržaj.</strong> Pogledaj šta je neuobičajeno, na primer predmet bez vlasnika, ostavljen u prolazu, u blizini ulaza ili u mestu gde prilaz ne bi trebao da stoji. Ne nagđaj šta je unutra i ne oslanjaj se na pretpostavke.</li>
+                            <li><strong>Proceni okolinu, ne sadržaj.</strong> Pogledaj šta je neuobičajeno, na primer predmet bez vlasnika, ostavljen u prolazu, u blizini ulaza ili u mestu gde predmet ne bi trebao da stoji. Ne nagađaj šta je unutra i ne oslanjaj se na pretpostavke.</li>
                             <li><strong>Udalji se i obezbedi prostor.</strong> Možeš se pomeriti i sprečiti nepotrebno zadržavanje ljudi u blizini. Ne izazivaj paniku, ne dodiruj predmet.</li>
                             <li><strong>Prijavi kroz propisani kanal.</strong> Prenesi lokaciju, opis predmeta, vreme zapažanja i sve vidljive okolnosti koje mogu pomoći operativnom centru. Nakon prijave, prati dalje uputstvo i budi dostupan ako se od tebe traži dodatno pojašnjenje.</li>
                         </ol>
@@ -384,7 +388,7 @@ public class DataInitializer implements CommandLineRunner {
                 .title("Obezbeđivanje restriktivne zone")
                 .content("""
                         <h3>Obezbeđivanje restriktivne zone</h3>
-                        <p>Akreditovano lice ne rešava sumnjiv predmet, već prevenstveno <strong>štiti sebe, druge i prostor</strong> do dolaska privatnog obezbeđenja ili MUP-a. Najvažnije je da se ostane miran, da se prilazi bliže nego što je bezbedno i da se ne ulazi u postupke koji lice na pregled i premeštanje predmeta.</p>
+                        <p>Akreditovano lice ne rešava sumnjiv predmet, već prvenstveno <strong>štiti sebe, druge i prostor</strong> do dolaska privatnog obezbeđenja ili MUP-a. Najvažnije je da se ostane miran, da se ne prilazi bliže nego što je bezbedno i da se ne ulazi u postupke koji uključuju pregled i premeštanje predmeta.</p>
 
                         <img src="/uploads/manInBlacHandRaised.jpg" class="img-fluid rounded mb-3" alt="Bezbednosno lice - zaustavi i prijavi">
 
@@ -408,7 +412,7 @@ public class DataInitializer implements CommandLineRunner {
                         <h4>Koraci zaštite restriktivne zone</h4>
                         <ol>
                             <li><strong>Povuci se na bezbednu razdaljinu.</strong> Ne zadržavaj se kod predmeta i ne pokušavaj da proceniš njegov sadržaj iz blizine. Kratko zadržavanje je dovoljno da potvrdiš lokaciju i da ne izgubiš pregled prostora.</li>
-                            <li><strong>Obavesti nadležne propisanim kanalom.</strong> Prenesi tačnu lokaciju, šta je viđeno i da li ima ljudi u blizini. Koristi se samo činjenice koje možeš pouzdano da potvrdiš, bez nagađanja.</li>
+                            <li><strong>Obavesti nadležne propisanim kanalom.</strong> Prenesi tačnu lokaciju, šta je viđeno i da li ima ljudi u blizini. Koristi samo činjenice koje možeš pouzdano da potvrdiš, bez nagađanja.</li>
                             <li><strong>Usmeri ljude dalje od mesta događaja.</strong> Smireno zamoli posetioce da se udalje i koristi reči koje ne izazivaju paniku. Cilj je da se prostor rastereti, a ne da se stvara gužva oko predmeta.</li>
                             <li><strong>Sačekaj dalja uputstva i ostani dostupan.</strong> Ne diraj predmet, ne premeštaj ga i ne preduzimaj radnje koje pripadaju obezbeđenju ili policiji. Ako se pojave nove informacije, odmah ih prosledi.</li>
                         </ol>
@@ -446,7 +450,7 @@ public class DataInitializer implements CommandLineRunner {
                             <li><strong>Precizirajte lokaciju.</strong> Navedite objekat, ulaz, sektor, sprat, prostor ili drugi orijentir koji će omogućiti brzo usmeravanje ekipe.</li>
                             <li><strong>Vreme uočavanja.</strong> Navedite da li je događaj trenutno u toku, kada ste ga prvi put uočili i da li se nešto menja.</li>
                             <li><strong>Opisati opasnost.</strong> Recite da li postoji povređivanje, panika, požar, sumnja na opasnu sadržinu, blokiran izlaz ili druga hitnost.</li>
-                            <li><strong>Navedite šta je već preduzeto.</strong> Recite da li ste obavestili obezbeđenje, udaljili ljude, obezbjedili prostor ili samo posmatrali bez priđlaženja.</li>
+                            <li><strong>Navedite šta je već preduzeto.</strong> Recite da li ste obavestili obezbeđenje, udaljili ljude, obezbedili prostor ili samo posmatrali bez prilaženja.</li>
                         </ol>
 
                         <table class="table">
@@ -473,17 +477,17 @@ public class DataInitializer implements CommandLineRunner {
                         <ul>
                             <li><strong>Zvaničan kanal je uvek merilo:</strong> obezbeđenje, organizator i druga nadležna lica daju uputstva koja se prate odmah.</li>
                             <li><strong>Kretanje mora biti kontrolisano:</strong> koriste se bezbedni izlazi koji su označeni i koji su navedeni u uputstvu.</li>
-                            <li><strong>Pomoć drugima je važna, ali samo kada je bezbedno:</strong> ako je neko usporen, zgrnut ili otežano pokretan, pruži se podrška bez pravljenja gužve i bez vraćanja unazad.</li>
+                            <li><strong>Pomoć drugima je važna, ali samo kada je bezbedno:</strong> ako je neko usporen, zgrčen ili otežano pokretan, pruži se podrška bez pravljenja gužve i bez vraćanja unazad.</li>
                             <li><strong>Povratak nije dozvoljen:</strong> u zonu se ne ulazi ponovo dok nadležni izričito ne potvrde da je bezbedno.</li>
                         </ul>
 
                         <h4>Koraci evakuacije</h4>
                         <ol>
-                            <li><strong>Prekini šta radiš i poslušaj zvanično uputstvo.</strong> Ako se oglasi alarm, čuje najava ili dobiješ nalog za evakuaciju, odmah prekini aktivnost i usmeri pažnju na najbližu informaciju. Ne oslanjaj se na prepričavanje drugih lica.</li>
+                            <li><strong>Prekini šta radiš i poslušaj zvanično uputstvo.</strong> Ako se oglasi alarm, čuje se najava ili dobiješ nalog za evakuaciju, odmah prekini aktivnost i usmeri pažnju na najbližu informaciju. Ne oslanjaj se na prepričavanje drugih lica.</li>
                             <li><strong>Kreni prema najbližem bezbednom izlazu.</strong> Prati označene pravce kretanja ili direktno uputstvo ovlašćenog lica. Ne koristi prečice, ne ulazi u zatvorene delove i ne zadržavaj se da proveravaš situaciju.</li>
                             <li><strong>Ostani miran i kreni se uredno.</strong> Zadrži razmak, ne trči i ne pravi gužvu. Ako su ti potrebni kratki usmeravajući signali ili potvrda pravca, traži ih od obezbeđenja ili drugog ovlašćenog lica.</li>
                             <li><strong>Pomozi drugima samo ako to možeš bez rizika.</strong> Ako neko ima poteškoće da se kreće, pruži kratku i jasnu pomoć, ali ne ugrožavaj sebe niti usporavaj tok evakuacije. Prioritet je da svi izađu bez dodatnog zastoja.</li>
-                            <li><strong>Stigni na odobreno zborna mesto i ostani tamo.</strong> Nakon izlaska, prijavi prema proceduri i sačekaj dalje uputstvo. Ne vraćaj se po lične stvari i ne ulazi ponovo u zonu dok ne dobiješ zvaničnu dozvolu.</li>
+                            <li><strong>Stigni na odobreno zborno mesto i ostani tamo.</strong> Nakon izlaska, prijavi prema proceduri i sačekaj dalje uputstvo. Ne vraćaj se po lične stvari i ne ulazi ponovo u zonu dok ne dobiješ zvaničnu dozvolu.</li>
                         </ol>
                         """)
                 .sortOrder(2)
@@ -498,7 +502,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         <h4>Osnovna pravila saradnje</h4>
                         <ul>
-                            <li><strong>Pridržavajte se naredanja privatnog obezbeđenja, MUP-a i drugih ovlašćenih službi.</strong></li>
+                            <li><strong>Pridržavajte se naredenja privatnog obezbeđenja, MUP-a i drugih ovlašćenih službi.</strong></li>
                             <li><strong>Ne ulazite u raspravu</strong> i ne pokušavajte da preuzmete vođenje postupka.</li>
                             <li><strong>Prijavite samo činjenice</strong> koje ste neposredno uočili, bez nagađanja.</li>
                             <li><strong>Čuvajte poverljive informacije</strong> i ne delite ih sa drugim licima na licu mesta.</li>
@@ -539,7 +543,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         <h4>Primer sa terena</h4>
                         <p>Akreditovana osoba u hodniku restriktivne zone primećuje napuštenu torbu blizu prolaza i istovremeno vidi kako nekoliko ljudi pokušava da uđe u prolaz koji nije predviđen za njihov nivo pristupa. U isto vreme, u zoni se stvara kratka zbrka jer deo pristupnih ne zna da li treba da ostane ili da se udalji.</p>
-                        <p>Ispravno odgovaranje da neko sam proverava sadržaj torbe, zaustavlja prolaznike ili improvizuje evakuaciju. Prvi korak je prijava operativnom centru obezbeđenja kroz zvanični kanal, uz kratak i precizan opis lokacije i onoga što je uočeno. Zatim se osoba udaljava od mesta, ne ometa prolaz i prati dalje uputstvo službi.</p>
+                        <p>Nije ispravno da neko sam proverava sadržaj torbe, zaustavlja prolaznike ili improvizuje evakuaciju. Prvi korak je prijava operativnom centru obezbeđenja kroz zvanični kanal, uz kratak i precizan opis lokacije i onoga što je uočeno. Zatim se osoba udaljava od mesta, ne ometa prolaz i prati dalje uputstvo službi.</p>
 
                         <h4>Koraci u kriznim situacijama</h4>
                         <ol>

@@ -36,6 +36,18 @@
                               th:text="${lesson.scenarioDescription}"
                               placeholder="Npr: Nalaziš se u restriktivnoj zoni kada uočiš napušten predmet..."></textarea>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label text-success fw-bold">Poruka na kraju vežbe — pozitivan rezultat (≥ 50% tačnih)</label>
+                    <textarea name="scenarioCompletePositive" class="form-control" rows="2"
+                              th:text="${lesson.scenarioCompletePositive}"
+                              placeholder="Npr: Odlično poznaješ postupke u restriktivnoj zoni. Nastavi tako!"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-danger fw-bold">Poruka na kraju vežbe — negativan rezultat (&lt; 50% tačnih)</label>
+                    <textarea name="scenarioCompleteNegative" class="form-control" rows="2"
+                              th:text="${lesson.scenarioCompleteNegative}"
+                              placeholder="Npr: Ponovi lekciju i obrati pažnju na protokole pre nego što završiš vežbu."></textarea>
+                </div>
                 <button type="submit" class="btn btn-sm btn-dark">Sačuvaj zaglavlje scenarija</button>
             </form>
         </div>
@@ -43,12 +55,12 @@
 
     <div class="alert alert-info d-flex justify-content-between align-items-center">
         <div>
-            <strong>Pravila:</strong> Svaka lekcija ima <strong>minimum 2</strong> i <strong>maksimum 4</strong> pitanja za vežbu.
+            <strong>Pravila:</strong> Lekcija može imati od <strong>0 do 4</strong> pitanja za vežbu (0 — bez vežbe).
             Trenutno: <strong th:text="${#lists.size(exercises)} + ' / 4'">0 / 4</strong>
         </div>
-        <div>
-            <span th:if="${#lists.size(exercises) < 2}" class="badge bg-warning text-dark">Potrebno još pitanja (min. 2)</span>
-            <span th:if="${#lists.size(exercises) >= 2 and #lists.size(exercises) <= 4}" class="badge bg-success">Optimalan broj</span>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <span th:if="${#lists.size(exercises) == 0}" class="badge bg-secondary">Bez vežbi</span>
+            <span th:if="${#lists.size(exercises) > 0 and #lists.size(exercises) < 4}" class="badge bg-success">Aktivne vežbe</span>
             <span th:if="${#lists.size(exercises) >= 4}" class="badge bg-danger">Maksimum (4/4)</span>
         </div>
     </div>
@@ -117,10 +129,17 @@
     </div>
 
     <!-- LIST EXISTING EXERCISES -->
-    <h4 class="mt-4 mb-3">Postojeća pitanja vežbe</h4>
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h4 class="mb-0">Postojeća pitanja vežbe</h4>
+        <form th:if="${exercises != null and !exercises.isEmpty()}"
+              th:action="@{/admin/lesson/{id}/exercises/delete-all(id=${lesson.id})}" method="post"
+              onsubmit="return confirm('Obrisati SVE vežbe (${#lists.size(exercises)} pitanja) za ovu lekciju? Ova radnja se ne može poništiti.');">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Obriši sve vežbe</button>
+        </form>
+    </div>
 
     <div th:if="${#lists.isEmpty(exercises)}" class="alert alert-warning">
-        Nema vežbi za ovu lekciju. Dodajte minimum 2 vežbe pomoću forme iznad.
+        Ova lekcija nema vežbi. Možete dodati nove vežbe pomoću forme iznad.
     </div>
 
     <div th:each="ex, iter : ${exercises}" class="card mb-3 shadow-sm">

@@ -18,7 +18,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Sadrzaj lekcije</label>
+                <label class="form-label fw-bold">Sadržaj lekcije</label>
                 <textarea name="content" id="contentArea" th:text="${lesson.content}"></textarea>
             </div>
 
@@ -28,13 +28,13 @@
                     <img th:src="${lesson.imagePath}" style="max-height:120px" class="rounded border">
                     <div class="form-check mt-1">
                         <input class="form-check-input" type="checkbox" name="removeImage" value="true" id="removeImage">
-                        <label class="form-check-label text-danger" for="removeImage">Obrisi naslovnu sliku</label>
+                        <label class="form-check-label text-danger" for="removeImage">Obriši naslovnu sliku</label>
                     </div>
                 </div>
                 <input type="file" name="image" class="form-control" accept="image/*">
             </div>
 
-            <button type="submit" class="btn btn-primary">Sacuvaj izmene</button>
+            <button type="submit" class="btn btn-primary">Sačuvaj izmene</button>
             <a href="/admin" class="btn btn-outline-secondary">Nazad</a>
             <a th:href="@{/lesson/{id}(id=${lesson.id})}" class="btn btn-outline-info" target="_blank">Pogledaj lekciju</a>
         </form>
@@ -88,7 +88,7 @@
                     var currentWidth = $img.css('width') || $img.attr('width') || 'auto';
 
                     var html = '<div class="p-2" style="min-width:180px">';
-                    html += '<p class="fw-bold mb-2">Velicina slike</p>';
+                    html += '<p class="fw-bold mb-2">Veličina slike</p>';
                     html += '<div class="d-flex flex-wrap gap-1 mb-2">';
                     Object.keys(widths).forEach(function (label) {
                         var active = (currentWidth === widths[label]) ? 'btn-primary' : 'btn-outline-primary';
@@ -97,10 +97,10 @@
                     html += '</div>';
                     html += '<div class="input-group input-group-sm mb-2">';
                     html += '<span class="input-group-text">px</span>';
-                    html += '<input type="number" class="form-control" id="customImgWidth" value="' + ($img.width() || '') + '" placeholder="sirina">';
+                    html += '<input type="number" class="form-control" id="customImgWidth" value="' + ($img.width() || '') + '" placeholder="širina">';
                     html += '</div>';
                     html += '<button class="btn btn-sm btn-success w-100" id="applyImgSize">Primeni</button>';
-                    html += '<button class="btn btn-sm btn-danger w-100 mt-1" id="removeImg">Obrisi sliku</button>';
+                    html += '<button class="btn btn-sm btn-danger w-100 mt-1" id="removeImg">Obriši sliku</button>';
                     html += '</div>';
 
                     var $popover = $('<div class="img-resize-popover" style="position:absolute;z-index:9999;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);"></div>');
@@ -143,7 +143,7 @@
         $('#contentArea').summernote({
             lang: 'sr-Latn',
             height: 500,
-            placeholder: 'Pisite sadrzaj lekcije ovde...',
+            placeholder: 'Pišite sadržaj lekcije ovde...',
             toolbar: [
                 ['style', ['style']],
                 ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
@@ -194,7 +194,7 @@
                 });
             },
             error: function (err) {
-                alert('Greska pri uploadu slike: ' + (err.responseText || 'nepoznata greska'));
+                alert('Greška pri uploadu slike: ' + (err.responseText || 'nepoznata greška'));
             }
         });
     }

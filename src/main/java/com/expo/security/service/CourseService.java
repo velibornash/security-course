@@ -342,10 +342,18 @@ public class CourseService {
     }
 
     @Transactional
-    public Lesson updateLessonScenario(Long lessonId, String scenarioTitle, String scenarioDescription) {
+    public void deleteExercisesForLesson(Long lessonId) {
+        exerciseRepository.deleteByLessonId(lessonId);
+    }
+
+    @Transactional
+    public Lesson updateLessonScenario(Long lessonId, String scenarioTitle, String scenarioDescription,
+                                       String scenarioCompletePositive, String scenarioCompleteNegative) {
         Lesson lesson = getLesson(lessonId);
         lesson.setScenarioTitle(scenarioTitle);
         lesson.setScenarioDescription(scenarioDescription);
+        lesson.setScenarioCompletePositive(scenarioCompletePositive);
+        lesson.setScenarioCompleteNegative(scenarioCompleteNegative);
         return lessonRepository.save(lesson);
     }
 }

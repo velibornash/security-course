@@ -4,6 +4,12 @@ import com.expo.security.model.Exercise;
 import com.expo.security.model.Lesson;
 import com.expo.security.model.QuizQuestion;
 import com.expo.security.model.Section;
+import com.expo.security.repository.ExerciseRepository;
+import com.expo.security.repository.LessonRepository;
+import com.expo.security.repository.QuizQuestionRepository;
+import com.expo.security.repository.SectionRepository;
+import com.expo.security.repository.UserRepository;
+import com.expo.security.service.BackupService;
 import com.expo.security.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,6 +31,12 @@ import java.util.*;
 public class AdminController {
 
     private final CourseService courseService;
+    private final BackupService backupService;
+    private final ExerciseRepository exerciseRepository;
+    private final LessonRepository lessonRepository;
+    private final QuizQuestionRepository quizQuestionRepository;
+    private final SectionRepository sectionRepository;
+    private final UserRepository userRepository;
 
     @GetMapping
     public String adminHome(Model model) {
@@ -280,13 +292,62 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/lesson/{id}/exercises/delete-all")
+    public String deleteAllExercises(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            courseService.deleteExercisesForLesson(id);
+            ra.addFlashAttribute("success", "Sve vežbe za ovu lekciju su obrisane");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/lesson/" + id + "/exercises";
+    }
+
+    @PostMapping("/init-course")
+    public String initCourse(RedirectAttributes ra) {
+        try {
+            if (backupService.isBackupEmpty()) {
+                ra.addFlashAttribute("error",
+                        "Backup ne postoji. Kliknite „Backup trenutno stanje“ pre inicijalizacije.");
+            } else {
+                Map<String, Integer> counts = backupService.restoreFromBackup();
+                ra.addFlashAttribute("success",
+                        "Kurs je vraćen iz backupa (sekcije: " + counts.get("backup_sections")
+                                + ", lekcije: " + counts.get("backup_lessons")
+                                + ", vežbe: " + counts.get("backup_exercises")
+                                + ", kviz pitanja: " + counts.get("backup_quiz_questions") + ").");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Greška prilikom inicijalizacije: " + e.getMessage());
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping("/backup")
+    public String backupCurrent(RedirectAttributes ra) {
+        try {
+            Map<String, Integer> counts = backupService.backup();
+            ra.addFlashAttribute("success",
+                    "Backup kreiran (sekcije: " + counts.get("backup_sections")
+                            + ", lekcije: " + counts.get("backup_lessons")
+                            + ", vežbe: " + counts.get("backup_exercises")
+                            + ", kviz pitanja: " + counts.get("backup_quiz_questions") + ").");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Greška prilikom backup-a: " + e.getMessage());
+        }
+        return "redirect:/login";
+    }
+
     @PostMapping("/lesson/{id}/scenario/edit")
     public String editScenarioInfo(@PathVariable Long id,
                                    @RequestParam(required = false) String scenarioTitle,
                                    @RequestParam(required = false) String scenarioDescription,
+                                   @RequestParam(required = false) String scenarioCompletePositive,
+                                   @RequestParam(required = false) String scenarioCompleteNegative,
                                    RedirectAttributes ra) {
         try {
-            courseService.updateLessonScenario(id, scenarioTitle, scenarioDescription);
+            courseService.updateLessonScenario(id, scenarioTitle, scenarioDescription,
+                    scenarioCompletePositive, scenarioCompleteNegative);
             ra.addFlashAttribute("success", "Informacije o scenariju ažurirane");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());

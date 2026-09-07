@@ -52,11 +52,11 @@
                     <input type="text" name="title" th:value="${section.title}" class="form-control form-control-sm" style="width:180px" required>
                     <input type="hidden" name="description" th:value="${section.description}">
                     <input type="number" name="sortOrder" th:value="${section.sortOrder}" class="form-control form-control-sm" style="width:70px">
-                    <button class="btn btn-sm btn-outline-secondary" title="Sacuvaj sekciju">Sacuvaj</button>
+                    <button class="btn btn-sm btn-outline-secondary" title="Sačuvaj sekciju">Sačuvaj</button>
                 </form>
                 <form th:action="@{/admin/section/{id}/delete(id=${section.id})}" method="post"
                       onsubmit="return confirm('Obrisati sekciju i sve njene lekcije?')">
-                    <button class="btn btn-sm btn-outline-danger">Obrisi sekciju</button>
+                    <button class="btn btn-sm btn-outline-danger">Obriši sekciju</button>
                 </form>
             </div>
         </div>
@@ -72,7 +72,7 @@
                     <a th:href="@{/admin/lesson/{id}/exercises(id=${lesson.id})}" class="btn btn-sm btn-outline-success">Vežbe</a>
                     <form th:action="@{/admin/lesson/{id}/delete(id=${lesson.id})}" method="post" class="d-inline"
                           onsubmit="return confirm('Obrisati lekciju?')">
-                        <button class="btn btn-sm btn-outline-danger">Obrisi</button>
+                        <button class="btn btn-sm btn-outline-danger">Obriši</button>
                     </form>
                 </div>
             </li>
@@ -86,7 +86,7 @@
                     <input type="text" name="title" class="form-control form-control-sm" placeholder="Naslov nove lekcije" required>
                 </div>
                 <div class="col-md-4">
-                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Pocetni tekst" value="<p>Novi sadrzaj...</p>">
+                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Početni tekst" value="<p>Novi sadržaj...</p>">
                 </div>
                 <div class="col-md-2">
                     <input type="number" name="sortOrder" class="form-control form-control-sm" placeholder="Redosled" value="99">

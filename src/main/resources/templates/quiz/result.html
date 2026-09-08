@@ -20,8 +20,8 @@
             </a>
 
             <div th:if="${attempt.certificatePdfUrl}" class="mt-3">
-                <a th:href="${attempt.certificatePdfUrl}" class="btn btn-outline-success" target="_blank">
-                    <i class="bi bi-file-earmark-pdf"></i> Otvori sacuvani PDF
+                <a th:href="@{/certificate/{id}(id=${attempt.id})}" class="btn btn-outline-success" target="_blank">
+                    <i class="bi bi-file-earmark-pdf"></i> Otvori sertifikat (PDF)
                 </a>
             </div>
         </div>

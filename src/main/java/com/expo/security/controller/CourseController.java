@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
@@ -97,6 +98,12 @@ public class CourseController {
 
     @GetMapping("/quiz")
     public String quiz(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        QuizAttempt passed = courseService.getLatestPassedAttempt(user.getId());
+        if (passed != null) {
+            model.addAttribute("attempt", passed);
+            return "quiz/result";
+        }
         model.addAttribute("questions", courseService.getAllQuestions());
         return "quiz/quiz";
     }
@@ -118,7 +125,8 @@ public class CourseController {
 
     @GetMapping("/certificate/{attemptId}")
     public ResponseEntity<byte[]> downloadCertificate(@PathVariable Long attemptId) throws Exception {
-        byte[] pdf = courseService.generatePdf(attemptId);
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        byte[] pdf = courseService.generatePdf(attemptId, baseUrl);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sertifikat-expo2027.pdf")
                 .contentType(MediaType.APPLICATION_PDF)

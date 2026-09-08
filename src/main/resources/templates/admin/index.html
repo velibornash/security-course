@@ -16,6 +16,26 @@
         </a>
     </div>
 
+    <!-- BACKUP/INIT -->
+    <div class="card mb-4 border-secondary">
+        <div class="card-header bg-secondary text-white fw-bold">Sigurnosne kopije</div>
+        <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap">
+                <form th:action="@{/admin/backup}" method="post">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-save"></i> Backup trenutno stanje
+                    </button>
+                </form>
+                <form th:action="@{/admin/init-course}" method="post"
+                      onsubmit="return confirm('Vratiti kurs iz backupa? Sve trenutne izmene biće obrisane.')">
+                    <button class="btn btn-outline-danger" type="submit">
+                        <i class="fas fa-redo"></i> Inicijalizuj kurs iz backupa
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- ADD NEW SECTION -->
     <div class="card mb-4 border-primary">
         <div class="card-header bg-primary text-white fw-bold">+ Nova sekcija</div>

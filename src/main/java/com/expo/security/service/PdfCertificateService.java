@@ -1,6 +1,5 @@
 package com.expo.security.service;
 
-import com.expo.security.model.QuizAnswer;
 import com.expo.security.model.QuizAttempt;
 import com.expo.security.model.User;
 import com.google.zxing.BarcodeFormat;
@@ -28,6 +27,10 @@ public class PdfCertificateService {
     private String baseUrl;
 
     public byte[] generateCertificate(QuizAttempt attempt) throws Exception {
+        return generateCertificate(attempt, baseUrl);
+    }
+
+    public byte[] generateCertificate(QuizAttempt attempt, String baseUrl) throws Exception {
         User user = attempt.getUser();
 
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -61,23 +64,6 @@ public class PdfCertificateService {
                 " (" + String.format("%.0f", attempt.getPercentage()) + "%)", bold));
         document.add(new Paragraph("Status: POLOŽENO", new Font(Font.HELVETICA, 12, Font.BOLD, new Color(0, 128, 0))));
         document.add(Chunk.NEWLINE);
-
-        // Answers summary
-        document.add(new Paragraph("Pregled odgovora:", bold));
-        document.add(Chunk.NEWLINE);
-
-        int i = 1;
-        for (QuizAnswer answer : attempt.getAnswers()) {
-            String status = answer.isCorrect() ? "✓ TAČNO" : "✗ NETAČNO";
-            Color color = answer.isCorrect() ? new Color(0, 128, 0) : new Color(180, 0, 0);
-            Font statusFont = new Font(Font.HELVETICA, 10, Font.NORMAL, color);
-
-            Paragraph q = new Paragraph(i + ". " + answer.getQuestion().getQuestionText(), normal);
-            document.add(q);
-            document.add(new Paragraph("   Odgovor: " + answer.getSelectedAnswer() + "  →  " + status, statusFont));
-            document.add(Chunk.NEWLINE);
-            i++;
-        }
 
         // QR Code
         document.add(Chunk.NEWLINE);

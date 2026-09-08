@@ -152,6 +152,12 @@ public class CourseService {
         return pdfService.generateCertificate(attempt);
     }
 
+    public byte[] generatePdf(Long attemptId, String baseUrl) throws Exception {
+        QuizAttempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(() -> new RuntimeException("Pokušaj nije pronađen"));
+        return pdfService.generateCertificate(attempt, baseUrl);
+    }
+
     // ========== ADMIN ==========
 
     @Transactional
@@ -269,6 +275,11 @@ public class CourseService {
 
     public QuizAttempt findByCertificateCode(String code) {
         return attemptRepository.findByCertificateCode(code)
+                .orElse(null);
+    }
+
+    public QuizAttempt getLatestPassedAttempt(Long userId) {
+        return attemptRepository.findFirstByUserIdAndPassedTrueOrderByAttemptedAtDesc(userId)
                 .orElse(null);
     }
 

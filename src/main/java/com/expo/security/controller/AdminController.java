@@ -320,7 +320,7 @@ public class AdminController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Greška prilikom inicijalizacije: " + e.getMessage());
         }
-        return "redirect:/login";
+        return "redirect:/admin";
     }
 
     @PostMapping("/backup")
@@ -335,7 +335,7 @@ public class AdminController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Greška prilikom backup-a: " + e.getMessage());
         }
-        return "redirect:/login";
+        return "redirect:/admin";
     }
 
     @PostMapping("/lesson/{id}/scenario/edit")

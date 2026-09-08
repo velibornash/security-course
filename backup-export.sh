@@ -26,7 +26,7 @@ echo "==> Exporting database '$DB' -> $OUT (client: $PG_DUMP)"
 
 if [ -d uploads ]; then
     echo "==> Packing uploads/ -> $ARCHIVE"
-    tar -czf "$ARCHIVE" uploads
+    tar --no-xattrs --no-acls -czf "$ARCHIVE" uploads
 else
     echo "!! uploads/ not found - skipping images (kept uploads on disk)"
 fi

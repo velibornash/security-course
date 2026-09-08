@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict Yx6lb41VhGQvcyXIVHqXodRss8JvayMR0cbCGhX4b2n0gtJe9bYNmmxKZeBnRd1
+\restrict v5ThdmvDBSxBgcauQ1rrbKa2eoRVSoEFZIkrc8cc7FNNze4hsfUo07GAvPvIAgt
 
 -- Dumped from database version 16.15 (Debian 16.15-1.pgdg13+2)
 -- Dumped by pg_dump version 16.15 (Debian 16.15-1.pgdg13+2)
@@ -582,16 +582,16 @@ t	100	10	10	2026-09-08 13:15:12.603084	2	3	016D271B	/uploads/certificates/sertif
 --
 
 COPY public.quiz_questions (correct_answer, sort_order, id, optiona, optionb, optionc, optiond, question_text) FROM stdin;
-B	10	10	PRIJAVI – VIDI – PREPOZNAJ	VIDI – PREPOZNAJ – PRIJAVI	PREPOZNAJ – PRIJAVI – VIDI	VIDI – PRIJAVI – PREPOZNAJ	Koji je ispravan redosled protokola za sumnjive predmete?
 D	1	1	Povećati broj zaposlenih kako bi se smanjila gužva.	Dopusttiti svakom zaposleniku pristup svim područjima.	Ukloniti sve bezbedonosne procedure.	Osigurati da samo obučeni i provereni pojedinci imaju pristup.	Šta je primarni cilj akreditacije?
 D	2	2	Prosto im se daje pristup bez dodatne provere.	Nakon individualne prijave bez proveravanja.	Učlanjenjem u sindikat.	Kroz redovne obuke i procene bezbednosti.	Kako se osigurava akreditacija zaposlenih?
 C	3	3	Pitate sve prisutne da li su ga videli i pokušate sami da otkrijete ko je odgovoran.	Objavite na grupnom četu da je neko verovatno uzeo dokument.	Prijavite događaj po proceduri i navedete šta tačno nedostaje, gde je poslednji put viđen i kada ste ga primetili.	Sačekate da se pojavi vlasnik dokumenta jer možda je samo zaboravljen.	Primećujete da je osetljivi dokument ostao na radnom mestu i da niko ne zna ko ga je uzeo. Šta radite?
 D	4	4	Zadržavate se da bi ostalim osobama objasnili šta mislite da se dešava.	Ignorišete uputstvo dok ne vidite da se drugi kreću ka tom izlazu.	Pravite prečicu kroz zabranjeni prolaz da bi brže izašli.	Pomažete drugima da krenu ka odobrenom izlazu i ostajete mirni tokom kretanja.	Stiglo je službeno uputstvo da se prostor napusti određenim izlazom. Šta radite?
 D	5	5	Svoje mišljenje ko bi mogao da je ostavio predmet.	Pretpostavku da se verovatno radi o opasnom predmetu.	Samo to da postoji problem bez objašnjenja.	Tačnu lokaciju, izgled predmeta, broj ljudi u blizini i šta se promenilo.	Nadređeni traži najkorisnije informacije o ostavljenom paketu bez nadzora. Šta prenosite?
 B	6	6	Podelite informacije odmah da ne usporite smenu.	Tražite da pokaže akreditaciju i proverite kroz odobreni kanal kome je podatak potreban.	Kažete mu da pita nekog drugog, a vi nastavite posao.	Ignorišete zahtev i odlazite bez odgovora.	Kolega traži plan rasporeda i lozinku, a vi niste sigurni da ima pravo da ih dobije. Šta radite prvo?
-B	7	7	Nastavljate dalje dok ne vidite da li vas neko zaustavlja.	Zaustavljate se i proveravate gde ste, bez daljeg ulaska.	Čekate da neko drugi preuzme odgovornost.	Sklanjate akreditaciju da ne privlači pažnju.	Primećujete da se nalazite u zoni koja ne odgovara vašem ovlašćenju. Šta radite prvo?
 C	8	8	Svi trebaju ostati da ponude podršku.	Smanjiti komunikaciju kako bi se izbegli problemi.	Osiguranje da nadležni budu pravilno obavešteni i da je mesto incidenta obezbeđeno.	Osobljee treba odmah napustiti mesto incidenta.	Koji je prioritet u saradnji sa nadležnim službama tokom incidenta?
 A	9	9	Opis aktivnosti, vreme, mesto i uključeni akteri.	Samo informacije o lokaciji.	Samo opis aktivnosti.	Ništa, to je besmisleno.	Koje informacije treba da sadrži prijava sumnjivih aktivnosti?
+D	7	10	Priđete da pogledate šta je unutra.	Odmah uzimate paket i nosite ga do obezbeđnja.	Pozovete nekoliko kolega da priđu i pogledaju.	Povučete se na dovoljnu razdaljinu i kratko procenite okolinu.	Primetili ste ostavljen paket u restriktivnoj zoni. Šta radite prvo?
+B	10	7	Nastavljate dalje dok ne vidite da li vas neko zaustavlja.	Zaustavljate se i proveravate gde ste, bez daljeg ulaska.	Čekate da neko drugi preuzme odgovornost.	Sklanjate akreditaciju da ne privlači pažnju.	Primećujete da se nalazite u zoni koja ne odgovara vašem ovlašćenju. Šta radite prvo?
 \.
 
 
@@ -884,5 +884,5 @@ ALTER TABLE ONLY public.user_progress
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Yx6lb41VhGQvcyXIVHqXodRss8JvayMR0cbCGhX4b2n0gtJe9bYNmmxKZeBnRd1
+\unrestrict v5ThdmvDBSxBgcauQ1rrbKa2eoRVSoEFZIkrc8cc7FNNze4hsfUo07GAvPvIAgt
 

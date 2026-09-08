@@ -8,3 +8,7 @@ uploads/
 data/
 *.log
 .DS_Store
+
+# DB backup / transfer artifacts
+expo_course.dump
+course_uploads.tar.gz

@@ -228,6 +228,9 @@ public class CourseService {
 
     @Transactional
     public void deleteLesson(Long id) {
+        // kaskadno ukloni zavisne zapise pre brisanja lekcije
+        exerciseRepository.deleteByLessonId(id);
+        progressRepository.deleteByLessonId(id);
         lessonRepository.deleteById(id);
     }
 

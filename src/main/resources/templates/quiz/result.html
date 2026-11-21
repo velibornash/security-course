@@ -30,7 +30,10 @@
             <h2 class="text-danger">Niste položili test</h2>
             <p class="lead" th:text="'Rezultat: ' + ${attempt.score} + ' / ' + ${attempt.totalQuestions} + ' (' + ${#numbers.formatDecimal(attempt.percentage,1,0)} + '%)'">70%</p>
             <p>Potrebno je najmanje 9 tačnih odgovora (90%).</p>
-            <a href="/quiz" class="btn btn-primary mt-3">Pokušaj ponovo</a>
+            <div class="alert alert-warning mt-3">
+                <i class="bi bi-book"></i> Preporuka: ponovo pročitajte lekcije kursa, a zatim se obratite administratoru za novi pokušaj.
+            </div>
+            <a href="/dashboard" class="btn btn-primary mt-3">Nazad na kurs</a>
         </div>
 
         <hr class="my-4">

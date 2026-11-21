@@ -94,9 +94,6 @@ public class EmailService {
                             <p style="margin: 5px 0;"><strong>Lozinka:</strong> %s</p>
                             <p style="margin: 5px 0;"><strong>Link za prijavu:</strong> <a href="%s/login">%s/login</a></p>
                         </div>
-                        <p style="color: #666; font-size: 12px;">
-                            Preporuka: promenite lozinku nakon prve prijave.
-                        </p>
                     </div>
                     <div style="background: #1e3c72; color: white; padding: 10px; text-align: center; font-size: 12px;">
                         Expo 2027 - Bezbednost u restriktivnim zonama

@@ -12,3 +12,6 @@ data/
 # DB backup / transfer artifacts
 expo_course.dump
 course_uploads.tar.gz
+
+# Local secrets
+application-local.properties

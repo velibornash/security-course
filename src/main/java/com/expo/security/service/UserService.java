@@ -25,7 +25,7 @@ public class UserService {
     private final EmailService emailService;
 
     @Transactional
-    public User register(String firstName, String lastName, String email, String password) {
+    public User register(String firstName, String lastName, String email, String password, String company) {
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Email već postoji");
         }
@@ -36,6 +36,7 @@ public class UserService {
                 .password(passwordEncoder.encode(password))
                 .role(Role.USER)
                 .enabled(true)
+                .company(company)
                 .build();
         return userRepository.save(user);
     }
@@ -50,12 +51,12 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(String firstName, String lastName, String email, String password) {
-        return register(firstName, lastName, email, password);
+    public User createUser(String firstName, String lastName, String email, String password, String company) {
+        return register(firstName, lastName, email, password, company);
     }
 
     @Transactional
-    public User updateUser(Long id, String firstName, String lastName, String email, String password) {
+    public User updateUser(Long id, String firstName, String lastName, String email, String password, String company) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen"));
         if (email != null && !email.isBlank() && !email.equals(user.getEmail())) {
@@ -68,6 +69,9 @@ public class UserService {
         if (lastName != null && !lastName.isBlank()) user.setLastName(lastName);
         if (password != null && !password.isBlank()) {
             user.setPassword(passwordEncoder.encode(password));
+        }
+        if (company != null) {
+            user.setCompany(company);
         }
         return userRepository.save(user);
     }

@@ -28,6 +28,8 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    private String company;
+
     @Email
     @NotBlank
     @Column(nullable = false, unique = true)
@@ -43,6 +45,7 @@ public class User {
 
     private boolean enabled = true;
 
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime emailSentAt;

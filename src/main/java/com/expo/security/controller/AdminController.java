@@ -356,9 +356,10 @@ public class AdminController {
                           @RequestParam String lastName,
                           @RequestParam String email,
                           @RequestParam String password,
+                          @RequestParam(required = false) String company,
                           RedirectAttributes ra) {
         try {
-            userService.createUser(firstName, lastName, email, password);
+            userService.createUser(firstName, lastName, email, password, company);
             ra.addFlashAttribute("success", "Korisnik kreiran");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
@@ -372,9 +373,10 @@ public class AdminController {
                            @RequestParam String lastName,
                            @RequestParam String email,
                            @RequestParam(required = false) String password,
+                           @RequestParam(required = false) String company,
                            RedirectAttributes ra) {
         try {
-            userService.updateUser(id, firstName, lastName, email, password);
+            userService.updateUser(id, firstName, lastName, email, password, company);
             ra.addFlashAttribute("success", "Korisnik ažuriran");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());

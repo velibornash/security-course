@@ -32,7 +32,7 @@ public class AuthController {
                            @RequestParam String password,
                            RedirectAttributes ra) {
         try {
-            userService.register(firstName, lastName, email, password);
+            userService.register(firstName, lastName, email, password, null);
             ra.addFlashAttribute("success", "Uspešna registracija! Prijavite se.");
             return "redirect:/login";
         } catch (Exception e) {

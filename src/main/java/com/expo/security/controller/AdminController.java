@@ -3,6 +3,7 @@ package com.expo.security.controller;
 import com.expo.security.model.Exercise;
 import com.expo.security.model.Lesson;
 import com.expo.security.model.QuizQuestion;
+import com.expo.security.model.QuizAttempt;
 import com.expo.security.model.Section;
 import com.expo.security.repository.ExerciseRepository;
 import com.expo.security.repository.LessonRepository;
@@ -10,6 +11,7 @@ import com.expo.security.repository.QuizQuestionRepository;
 import com.expo.security.repository.SectionRepository;
 import com.expo.security.repository.UserRepository;
 import com.expo.security.service.BackupService;
+import com.expo.security.service.UserService;
 import com.expo.security.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -31,6 +33,7 @@ import java.util.*;
 public class AdminController {
 
     private final CourseService courseService;
+    private final UserService userService;
     private final BackupService backupService;
     private final ExerciseRepository exerciseRepository;
     private final LessonRepository lessonRepository;
@@ -39,9 +42,19 @@ public class AdminController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public String adminHome(Model model) {
+    public String adminHome(@RequestParam(required = false) String tab, Model model) {
         List<Section> sections = courseService.getAllSections();
         model.addAttribute("sections", sections);
+        model.addAttribute("questions", courseService.getAllQuestions());
+        List<com.expo.security.model.User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        java.util.Map<Long, QuizAttempt> latestAttempts = new java.util.HashMap<>();
+        for (com.expo.security.model.User u : users) {
+            QuizAttempt a = userService.getLatestAttempt(u.getId());
+            if (a != null) latestAttempts.put(u.getId(), a);
+        }
+        model.addAttribute("latestAttempts", latestAttempts);
+        model.addAttribute("activeTab", tab != null ? tab : "backup");
         return "admin/index";
     }
 
@@ -168,10 +181,8 @@ public class AdminController {
     // ========== QUIZ QUESTIONS ==========
 
     @GetMapping("/quiz")
-    public String quizQuestions(Model model) {
-        List<QuizQuestion> questions = courseService.getAllQuestions();
-        model.addAttribute("questions", questions);
-        return "admin/quiz";
+    public String quizTab() {
+        return "redirect:/admin?tab=quiz";
     }
 
     @PostMapping("/quiz/add")
@@ -190,7 +201,7 @@ public class AdminController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin/quiz";
+        return "redirect:/admin?tab=quiz";
     }
 
     @PostMapping("/quiz/{id}/edit")
@@ -210,7 +221,7 @@ public class AdminController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin/quiz";
+        return "redirect:/admin?tab=quiz";
     }
 
     @PostMapping("/quiz/{id}/delete")
@@ -221,7 +232,7 @@ public class AdminController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin/quiz";
+        return "redirect:/admin?tab=quiz";
     }
 
     // ========== EXERCISES (Pokreni vežbu) ==========
@@ -336,6 +347,45 @@ public class AdminController {
             ra.addFlashAttribute("error", "Greška prilikom backup-a: " + e.getMessage());
         }
         return "redirect:/admin";
+    }
+
+    // ========== USERS ==========
+
+    @PostMapping("/user/add")
+    public String addUser(@RequestParam String firstName,
+                          @RequestParam String lastName,
+                          @RequestParam String email,
+                          @RequestParam String password,
+                          RedirectAttributes ra) {
+        try {
+            userService.createUser(firstName, lastName, email, password);
+            ra.addFlashAttribute("success", "Korisnik kreiran");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin?tab=users";
+    }
+
+    @PostMapping("/user/{id}/send-credentials")
+    public String sendCredentials(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            userService.sendCredentials(id);
+            ra.addFlashAttribute("success", "Podaci su poslati na mejl korisnika");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin?tab=users";
+    }
+
+    @PostMapping("/user/{id}/delete")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            userService.deleteUser(id);
+            ra.addFlashAttribute("success", "Korisnik obrisan");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin?tab=users";
     }
 
     @PostMapping("/lesson/{id}/scenario/edit")

@@ -45,6 +45,8 @@ public class User {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    private LocalDateTime emailSentAt;
+
     public String getFullName() {
         return firstName + " " + lastName;
     }

@@ -31,7 +31,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom("noreply@expo.rs", "Expo 2027 Security");
+            helper.setFrom("onboarding@resend.dev", "Expo 2027 Security");
             helper.setTo(user.getEmail());
             helper.setSubject("Sertifikat - " + courseName);
 
@@ -69,6 +69,50 @@ public class EmailService {
             log.error("Failed to send certificate email to {}: {}", user.getEmail(), e.getMessage());
         } catch (Exception e) {
             log.error("Unexpected error sending email to {}: {}", user.getEmail(), e.getMessage());
+        }
+    }
+
+    public void sendCredentials(User user, String rawPassword) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("onboarding@resend.dev", "Expo 2027 Security");
+            helper.setTo(user.getEmail());
+            helper.setSubject("Pristupni podaci - " + courseName);
+
+            String html = """
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background: #1e3c72; color: white; padding: 20px; text-align: center;">
+                        <h1 style="margin: 0;">Expo 2027 Security</h1>
+                    </div>
+                    <div style="padding: 30px; background: #f9f9f9;">
+                        <h2 style="color: #1e3c72;">Pozdrav, %s!</h2>
+                        <p>Kreiran vam je nalog za kurs <strong>%s</strong>.</p>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #ddd;">
+                            <p style="margin: 5px 0;"><strong>Korisničko ime (email):</strong> %s</p>
+                            <p style="margin: 5px 0;"><strong>Lozinka:</strong> %s</p>
+                            <p style="margin: 5px 0;"><strong>Link za prijavu:</strong> <a href="%s/login">%s/login</a></p>
+                        </div>
+                        <p style="color: #666; font-size: 12px;">
+                            Preporuka: promenite lozinku nakon prve prijave.
+                        </p>
+                    </div>
+                    <div style="background: #1e3c72; color: white; padding: 10px; text-align: center; font-size: 12px;">
+                        Expo 2027 - Bezbednost u restriktivnim zonama
+                    </div>
+                </div>
+                """.formatted(user.getFullName(), courseName, user.getEmail(), rawPassword, baseUrl, baseUrl);
+
+            helper.setText(html, true);
+            mailSender.send(message);
+            log.info("Credentials email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            log.error("Failed to send credentials email to {}: {}", user.getEmail(), e.getMessage());
+            throw new RuntimeException("Greška pri slanju mejla: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error sending credentials email to {}: {}", user.getEmail(), e.getMessage());
+            throw new RuntimeException("Greška pri slanju mejla: " + e.getMessage());
         }
     }
 }

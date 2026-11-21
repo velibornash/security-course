@@ -422,4 +422,27 @@ public class AdminController {
         }
         return "redirect:/admin/lesson/" + id + "/exercises";
     }
+
+    @PostMapping("/user/send-all-credentials")
+    public String sendAllCredentials(RedirectAttributes ra) {
+        try {
+            String report = userService.sendCredentialsToAllPending();
+            ra.addFlashAttribute("success", report);
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin?tab=users";
+    }
+
+    @PostMapping("/user/import")
+    public String importUsers(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
+        try {
+            String report = userService.importUsersFromExcel(file);
+            ra.addFlashAttribute("success", report);
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin?tab=users";
+    }
+
 }

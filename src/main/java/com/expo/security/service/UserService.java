@@ -9,6 +9,11 @@ import com.expo.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.InputStream;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
@@ -112,4 +117,75 @@ public class UserService {
         }
         return sb.toString();
     }
+
+    @Transactional
+    public String sendCredentialsToAllPending() {
+        List<User> pending = userRepository.findAll().stream()
+                .filter(u -> u.getEmailSentAt() == null).toList();
+        int ok = 0, fail = 0;
+        for (User u : pending) {
+            try {
+                sendCredentials(u.getId());
+                ok++;
+            } catch (Exception e) {
+                fail++;
+            }
+        }
+        return "Poslato " + ok + " od " + pending.size() + " mejlova"
+                + (fail > 0 ? " (" + fail + " grešaka)." : ".");
+    }
+
+    @Transactional
+    public String importUsersFromExcel(MultipartFile file) {
+        int created = 0, skipped = 0, errors = 0;
+        StringBuilder details = new StringBuilder();
+        try (InputStream is = file.getInputStream();
+             Workbook wb = new XSSFWorkbook(is)) {
+            Sheet sheet = wb.getSheetAt(0);
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+                String firstName = cellValue(row, 0);
+                String lastName = cellValue(row, 1);
+                String email = cellValue(row, 2);
+                String company = cellValue(row, 3);
+                String password = cellValue(row, 4);
+                if (email.isBlank()) {
+                    if (firstName.isBlank() && lastName.isBlank()) continue; // skip empty rows
+                    errors++;
+                    details.append("Red ").append(i + 1).append(": prazan email. ");
+                    continue;
+                }
+                if (userRepository.existsByEmail(email)) {
+                    skipped++;
+                    continue;
+                }
+                try {
+                    String pwd = password.isBlank() ? generateRandomPassword(10) : password;
+                    register(firstName, lastName, email, pwd, company);
+                    created++;
+                } catch (Exception e) {
+                    errors++;
+                    details.append("Red ").append(i + 1).append(": ").append(e.getMessage()).append(" ");
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Greška pri čitanju fajla: " + e.getMessage());
+        }
+        String report = "Kreirano: " + created + ", preskočeno (duplikati): " + skipped + ", greške: " + errors + ".";
+        if (details.length() > 0) report += " Detalji: " + details;
+        return report;
+    }
+
+    private String cellValue(Row row, int idx) {
+        Cell c = row.getCell(idx);
+        if (c == null) return "";
+        try {
+            c.setCellType(CellType.STRING);
+        } catch (Exception ignored) {
+        }
+        String v = c.getStringCellValue();
+        return v == null ? "" : v.trim();
+    }
 }
+

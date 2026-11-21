@@ -321,6 +321,21 @@
             <div class="card">
                 <div class="card-header fw-bold">Korisnici</div>
                 <div class="card-body border-bottom">
+                    <div class="d-flex gap-2 flex-wrap mb-3">
+                        <form th:action="@{/admin/user/send-all-credentials}" method="post"
+                              onsubmit="return confirm('Poslati nove pristupne podatke svim korisnicima bez poslatog mejla? Lozinke će biti resetovane.')">
+                            <button class="btn btn-sm btn-outline-primary" type="submit">
+                                <i class="bi bi-envelope-plus"></i> Pošalji mejl svima (nije poslat)
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/user/import}" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
+                            <input type="file" name="file" accept=".xlsx" class="form-control form-control-sm" style="width:260px" required>
+                            <button class="btn btn-sm btn-outline-success" type="submit">
+                                <i class="bi bi-upload"></i> Učitaj Excel
+                            </button>
+                        </form>
+                        <small class="text-muted align-self-center">Kolone: Ime, Prezime, Email, Kompanija, Lozinka (opciono)</small>
+                    </div>
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
                             <label class="form-label small mb-1">Pretraga</label>

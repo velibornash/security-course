@@ -366,6 +366,22 @@ public class AdminController {
         return "redirect:/admin?tab=users";
     }
 
+    @PostMapping("/user/{id}/edit")
+    public String editUser(@PathVariable Long id,
+                           @RequestParam String firstName,
+                           @RequestParam String lastName,
+                           @RequestParam String email,
+                           @RequestParam(required = false) String password,
+                           RedirectAttributes ra) {
+        try {
+            userService.updateUser(id, firstName, lastName, email, password);
+            ra.addFlashAttribute("success", "Korisnik ažuriran");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin?tab=users";
+    }
+
     @PostMapping("/user/{id}/send-credentials")
     public String sendCredentials(@PathVariable Long id, RedirectAttributes ra) {
         try {

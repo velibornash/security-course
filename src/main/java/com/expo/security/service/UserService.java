@@ -55,6 +55,24 @@ public class UserService {
     }
 
     @Transactional
+    public User updateUser(Long id, String firstName, String lastName, String email, String password) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen"));
+        if (email != null && !email.isBlank() && !email.equals(user.getEmail())) {
+            if (userRepository.existsByEmail(email)) {
+                throw new RuntimeException("Email već postoji");
+            }
+            user.setEmail(email);
+        }
+        if (firstName != null && !firstName.isBlank()) user.setFirstName(firstName);
+        if (lastName != null && !lastName.isBlank()) user.setLastName(lastName);
+        if (password != null && !password.isBlank()) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+        return userRepository.save(user);
+    }
+
+    @Transactional
     public void deleteUser(Long id) {
         progressRepository.deleteByUserId(id);
         attemptRepository.deleteByUserId(id);

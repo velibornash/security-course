@@ -349,6 +349,9 @@
                                     <span th:unless="${latestAttempts[u.id] != null and latestAttempts[u.id].passed}" class="text-muted">-</span>
                                 </td>
                                 <td>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="modal" th:data-bs-target="'#editUser' + ${u.id}">
+                                        <i class="bi bi-pencil"></i> Izmeni
+                                    </button>
                                     <form th:action="@{/admin/user/{id}/send-credentials(id=${u.id})}" method="post" class="d-inline"
                                           onsubmit="return confirm('Poslati nove pristupne podatke korisniku? Lozinka će biti resetovana.')">
                                         <button class="btn btn-sm btn-outline-primary" type="submit">
@@ -366,6 +369,44 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- EDIT USER MODALS -->
+            <div th:each="u : ${users}">
+                <div class="modal fade" th:id="'editUser' + ${u.id}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Izmeni korisnika</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form th:action="@{/admin/user/{id}/edit(id=${u.id})}" method="post">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ime</label>
+                                        <input type="text" name="firstName" class="form-control" th:value="${u.firstName}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Prezime</label>
+                                        <input type="text" name="lastName" class="form-control" th:value="${u.lastName}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email (login)</label>
+                                        <input type="email" name="email" class="form-control" th:value="${u.email}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nova lozinka (opciono)</label>
+                                        <input type="text" name="password" class="form-control" placeholder="Ostavi prazno da ne menjaš">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
+                                    <button type="submit" class="btn btn-primary">Sačuvaj</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
